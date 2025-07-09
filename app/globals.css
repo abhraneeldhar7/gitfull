@@ -92,7 +92,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
 
-  --bgCol: #FFFAFA
+  --bgCol: rgb(250, 239, 251)
 }
 
 .dark {
