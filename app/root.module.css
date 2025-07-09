@@ -146,9 +146,7 @@
     }
 
     .heroCard1 {
-        /* left: 50%; */
-
-        transform: translateX(-60px) translateY(-240px) scale(0.7);
+        transform: translateX(-60px) translateY(-230px) scale(0.7);
     }
 
     .heroCard2 {
