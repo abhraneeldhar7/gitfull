@@ -7,6 +7,9 @@ import styles from "./root.module.css"
 import gradientBg from "../public/artistic-blurry-colorful-wallpaper-background.jpg"
 import { useRouter } from "next/navigation";
 import { BackgroundBeams } from "@/components/ui/background-beams";
+import TwitterCard from "@/components/socialCards/twitter/twitterCard";
+import LinkedinCard from "@/components/socialCards/linkedin/linkedin";
+import BugspotCard from "@/components/socialCards/bugspot/bugspotCard";
 
 export default function Home() {
   const router = useRouter();
@@ -18,7 +21,7 @@ export default function Home() {
       <Image src={gradientBg} className="top-0 left-0 absolute w-[100%] h-[100%] z-[-2] opacity-[0.2] invert dark:opacity-[0.2] dark:filter-none object-cover" alt="" />
       <div className={styles.heroDiv}>
         <div className="flex-1 flex flex-col gap-[20px]">
-          <h1>Turn your <span className="text-[#f9411c]">git</span> repos into social media engagement</h1>
+          <h1 className={styles.heroTitle}>Turn your <span className="text-[#f9411c]">git</span> repos into social media engagement</h1>
 
           <Button className={styles.heroBtn} onClick={() => {
             if (session) {
@@ -34,16 +37,51 @@ export default function Home() {
         </div>
 
         <div className={styles.heroImgDiv}>
-          img here
+
+
+          <div className={styles.heroCard1}>
+            <LinkedinCard />
+          </div>
+
+          <div className={styles.heroCard2}>
+            <BugspotCard blogData={{
+              blogId: "",
+              ownerId: "107727811528334796477",
+              ownerName: "Abhraneel",
+              blogTextContent: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates magni nostrum ullam dolorum corrupti error? Repellendus veniam dignissimos quos consectetur!",
+              blogTitle: "New AI App",
+              likes: [],
+              bookmarks: 0,
+              analyticsNumber: 0,
+              commentsNumber: 0,
+              tags: [],
+              thumbnailUrl: "https://res.cloudinary.com/dytynwrxu/image/upload/v1751995102/blogThumbnails/c04338b9-6562-4523-b0a7-41af564c4b62.jpg",
+              viewStatus: "public",
+              createdAt: 0,
+              lastEditTime: 0,
+              updatedAt: 0,
+            }} />
+          </div>
+
+          <div className={styles.heroCard3}>
+            <TwitterCard />
+          </div>
         </div>
+
       </div>
 
 
       <div className={styles.mainContent}>
-        
+
+
+        <div>
+          <h1>Cursor for build-in-public</h1>
+        </div>
+
+
+
+
       </div>
-
-
 
     </div>
   )

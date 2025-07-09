@@ -1,0 +1,30 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --card-color: #f0f0f0;
+}
+
+.dark {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --card-color: #1e1e1e;
+}
+
+
+.cardMain {
+    display: flex;
+    gap: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    /* min-width: 400px; */
+    max-width: 450px;
+    background-color: rgb(236, 253, 255);
+    background-color: #121212;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.cardMain:hover{
+    transform: scale(1.01) translateY(-4px);
+}

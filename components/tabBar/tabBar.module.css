@@ -15,6 +15,7 @@
     border: none;
     width: fit-content;
     padding: 0;
+    font-weight: 400;
 }
 
 .navOptionsDiv button:hover {
