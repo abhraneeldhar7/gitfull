@@ -88,21 +88,12 @@
 }
 
 
-.mainContent {
-    min-height: 500px;
-    background: linear-gradient(transparent 0%, var(--bgCol) 40%, var(--bgCol) 100%);
-    margin-top: 50px;
-    padding: 20px 40px;
-    padding-top: 40px;
-
-
-}
 
 
 @media (max-width:600px) {
     .main {
         padding: 40px 0px;
-        padding-top: 100px;
+        padding-top: 50px;
 
         padding-bottom: 0px;
     }
@@ -135,12 +126,12 @@
     }
 
     .heroCard2 {
-        transform: translateX(-50%) translateY(-50%) scale(0.97);
+        transform: translateX(-50%) translateY(-50%) scale(0.95);
     }
 
     .heroCard3{
         left: 50%;
-        transform: translateX(-50%) translateY(30px) scale(1);
+        transform: translateX(-50%) translateY(30px) scale(0.97);
     }
 
     .heroBtn {
