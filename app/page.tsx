@@ -72,7 +72,7 @@ export default function Home() {
       </div>
 
 
-      <div className="min-h-[500px]">
+      <div className="min-h-[500px] mt-[50px]">
 
         <h1 className={styles.sectionTitle}>
           Not your average gpt wrapper
