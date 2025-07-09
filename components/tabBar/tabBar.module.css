@@ -31,10 +31,8 @@
     left: 50%;
     position: absolute;
     transform: translateY(-50%) translateX(-50%);
-    gap: 30px;
+    gap: 50px;
 }
-
-
 
 
 
