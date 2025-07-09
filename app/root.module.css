@@ -131,7 +131,7 @@
 
     .heroCard3{
         left: 50%;
-        transform: translateX(-50%) translateY(30px) scale(0.97);
+        transform: translateX(-50%) translateY(30px) scale(1);
     }
 
     .heroBtn {
