@@ -19,6 +19,7 @@
 
 .heroDiv h1 {
     font-size: 50px;
+    line-height: 1.4em;
 }
 
 .heroBtn {
@@ -34,18 +35,21 @@
     transition: all 0.2s;
 
     background: #ff4f2b;
-    background: linear-gradient(173deg, rgba(255, 79, 43, 1) 38%, rgba(245, 57, 20, 1) 61%);
+    background: linear-gradient(180deg, rgba(255, 79, 43, 1) 38%, rgba(245, 57, 20, 1) 61%);
+
 }
 
 .heroBtn:hover {
     transform: scale(1.02);
-    background-color: #fc2e05;
+    background: linear-gradient(0deg, rgba(255, 79, 43, 1) 38%, rgba(245, 57, 20, 1) 61%);
 }
 
 .heroImgDiv {
     flex: 1;
-    width: 10px;
-    height: 400px;
+    /* height: 400px; */
+    max-height: 500px;
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,10 +66,17 @@
 
     .heroDiv {
         flex-direction: column;
+        height: 70vh;
+        gap: 0;
+
     }
 
     .heroDiv h1 {
         text-align: center;
+        line-height: 1.2em;
+        font-size: 40px;
+        height: fit-content;
+        flex: none;
     }
 
     .heroImgDiv {
