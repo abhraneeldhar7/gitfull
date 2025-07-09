@@ -92,7 +92,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 
 
-  --bgCol: rgb(250, 239, 251)
+  --bgCol: rgb(250, 239, 251);
+
+  --githubBg: rgb(236, 253, 255);
 }
 
 .dark {
@@ -130,7 +132,9 @@
 
 
 
-  --bgCol: #0c0a09
+  --bgCol: #0c0a09;
+  --githubBg: #151515;
+
 }
 
 @layer base {

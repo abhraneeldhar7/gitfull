@@ -10,6 +10,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 import TwitterCard from "@/components/socialCards/twitter/twitterCard";
 import LinkedinCard from "@/components/socialCards/linkedin/linkedin";
 import BugspotCard from "@/components/socialCards/bugspot/bugspotCard";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -78,6 +79,35 @@ export default function Home() {
           Not your average gpt wrapper
         </h1>
 
+
+        <div className="flex justify-center mt-[50px]">
+
+
+          <div className="w-[100%] max-w-[500px] bg-[var(--githubBg)]/40 border border-[1px] border-[var(--foreground)]/30 px-[20px] py-[10px] rounded-[20px] backdrop-blur-[5px] font-[Satoshi] font-[600]text-[var(--foreground)] pb-[20px]">
+            <h1 className="text-[30px]">Gitfull Repository</h1>
+
+            <hr className="my-[10px]" />
+
+            <h2 className="text-[29px] flex gap-[5px] items-center"><span className="text-[20px]">🌟</span> Features</h2>
+            <p className="ml-[50px] text-[18px]">In detail readme.md</p>
+            <p className="ml-[50px] text-[18px]">Instant post generator</p>
+            <p className="ml-[50px] text-[18px]">One click article writer</p>
+
+            <h2 className="text-[29px]  flex gap-[5px] items-center mt-[10px]"><span className="text-[20px]">💻</span> Tech Stack</h2>
+            <p className="ml-[50px] text-[18px]">NextJs</p>
+            <p className="ml-[50px] text-[18px]">Tailwind</p>
+            <p className="ml-[50px] text-[18px]">MongoDB</p>
+
+            <hr className="my-[10px] mt-[20px]" />
+            <h2 className="text-[29px]  flex gap-[5px] items-center mt-[10px]">Support</h2>
+            <Link href="https://x.com/abhraneeldhar" target="_blank">
+              <p className="bg-[var(--background)] rounded-[6px] py-[10px] px-[20px] mt-[10px] border border-[1px] border-[var(--foreground)]/20">https://x.com/abhraneeldhar</p>
+            </Link>
+
+
+          </div>
+
+        </div>
 
       </div>
 
