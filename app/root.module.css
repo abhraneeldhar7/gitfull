@@ -1,10 +1,11 @@
 .main {
     font-family: "Poppins";
-    padding: 40px 40px;
+    padding: 40px 0px;
     transition: all 0.3s;
     /* background-color: var(--bgCol); */
     position: relative;
     padding-top: 50px;
+    padding-bottom: 0px;
 }
 
 .heroDiv {
@@ -15,6 +16,7 @@
     min-width: 300px;
     flex-wrap: wrap;
     align-items: center;
+    padding: 0px 40px;
 }
 
 .heroDiv h1 {
@@ -58,17 +60,27 @@
     min-width: 300px;
 }
 
+
+.mainContent {
+    min-height: 500px;
+    background: linear-gradient(transparent 0%, var(--bgCol) 40%, var(--background) 100%);
+    margin-top: 50px;
+}
+
+
 @media (max-width:600px) {
     .main {
-        padding: 40px 10px;
+        padding: 40px 0px;
         padding-top: 100px;
+
+        padding-bottom: 0px;
     }
 
     .heroDiv {
         flex-direction: column;
         height: 70vh;
         gap: 0;
-
+        padding: 0px 10px;
     }
 
     .heroDiv h1 {
@@ -82,7 +94,8 @@
     .heroImgDiv {
         width: 100%;
     }
-    .heroBtn{
+
+    .heroBtn {
         font-size: 30px;
     }
 }
