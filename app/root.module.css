@@ -146,7 +146,8 @@
     }
 
     .heroCard1 {
-        transform: translateX(-60px) translateY(-230px) scale(0.7);
+left:50%;
+        transform: translateX(-50%) translateY(-230px) scale(0.7);
     }
 
     .heroCard2 {
