@@ -51,8 +51,6 @@
     color: white;
     cursor: pointer;
     transition: all 0.2s;
-    background: #ff4f2b;
-    background: linear-gradient(180deg, rgba(255, 79, 43, 1) 0%, rgb(183, 37, 8) 100%);
 }
 
 .heroBtn:hover {
