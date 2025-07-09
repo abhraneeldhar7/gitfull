@@ -140,6 +140,6 @@
 
   body {
     @apply bg-background text-foreground;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
 }

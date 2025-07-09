@@ -2,12 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect } from "react";
 
 import styles from "./root.module.css"
-import { useTheme } from "next-themes";
 import gradientBg from "../public/artistic-blurry-colorful-wallpaper-background.jpg"
-import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 
@@ -16,7 +13,6 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const { theme, setTheme } = useTheme();
 
   return (
     <div className={styles.main}>
@@ -45,16 +41,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Button onClick={() => {
-        if (theme == "dark") {
-          setTheme("light");
-        }
-        else {
-          setTheme("dark")
-        }
-      }}>
-        toggle theme
-      </Button>
+  
 
 
     </div>

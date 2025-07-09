@@ -82,4 +82,7 @@
     .heroImgDiv {
         width: 100%;
     }
+    .heroBtn{
+        font-size: 30px;
+    }
 }
