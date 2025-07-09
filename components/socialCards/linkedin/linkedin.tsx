@@ -2,7 +2,7 @@ import Image from "next/image"
 import styles from "./linkedin.module.css"
 import { AlignVerticalJustifyStartIcon, Bookmark, Cross, Dot, Earth, EllipsisIcon, Heart, LucideReceiptPoundSterling, MessageCircle, WholeWord, X } from "lucide-react"
 export default function LinkedinCard() {
-    return (<div className={styles.cardMain}>
+    return (<div className={`${styles.cardMain} border border-[1px] border-[var(--foreground)]/30`}>
         <EllipsisIcon size={20} className="absolute right-[45px] top-[7px] opacity-[0.5]" />
         <X size={20} className="absolute right-[10px] top-[7px] opacity-[0.5]" />
 

@@ -3,7 +3,8 @@ import styles from "./bugspotCard.module.css"
 import Link from "next/link"
 import { BlogType } from "@/lib/types";
 export default function BugspotCard({ blogData }: {
-    blogData: BlogType}) {
+    blogData: BlogType
+}) {
     function getFirstImageUrl(markdown: string): string | null {
         const imageRegex = /!\[.*?\]\((.*?)\)/;
         const match = markdown.match(imageRegex);
@@ -64,7 +65,7 @@ export default function BugspotCard({ blogData }: {
             // Trim spaces
             .trim();
     }
-    return (<div className={styles.main}>
+    return (<div className={`${styles.main} border border-[1px] border-[var(--foreground)]/30`}>
         <div className={styles.imageHolder}>
             <Link href={`/profile/${blogData.ownerId}`}>
                 <Image src={`https://res.cloudinary.com/dytynwrxu/image/upload/profilePics/${blogData.ownerId}.jpg`} width={40} height={40} alt="" unoptimized />

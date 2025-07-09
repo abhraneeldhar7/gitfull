@@ -2,7 +2,7 @@ import Image from "next/image"
 import styles from "./twitter.module.css"
 import { AlignVerticalJustifyStartIcon, Bookmark, Dot, EllipsisIcon, Heart, LucideReceiptPoundSterling, MessageCircle } from "lucide-react"
 export default function TwitterCard() {
-    return (<div className={styles.cardMain}>
+    return (<div className={`${styles.cardMain} border border-[1px] border-[var(--foreground)]/30`}>
         <EllipsisIcon size={20} className="absolute right-[10px] top-[7px] opacity-[0.5]" />
         <div className="w-[40px]">
             <Image src="https://res.cloudinary.com/dytynwrxu/image/upload/profilePics/101428758399536600490.jpg?v=2025-07-09" width={40} height={40} alt="" className="min-w-[40px] h-[40px] rounded-[50%]" unoptimized />

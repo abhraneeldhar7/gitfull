@@ -148,18 +148,19 @@
     }
 
     .heroCard1 {
-        left: 50%;
+        /* left: 50%; */
 
-        transform: translateX(-50%) translateY(-210px) scale(0.8);
+        transform: translateX(-60px) translateY(-240px) scale(0.7);
     }
 
     .heroCard2 {
-        transform: translateX(-50%) translateY(-50%) scale(0.95);
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%) scale(0.85);
     }
 
     .heroCard3 {
-        left: 50%;
-        transform: translateX(-50%) translateY(30px) scale(1);
+        left: 0%;
+        transform: translateX(0px) translateY(30px) scale(0.8);
     }
 
     .heroBtn {

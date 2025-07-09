@@ -6,8 +6,9 @@
     width: 100%;
     max-width: 450px;
     /* background-color: rgb(236, 253, 255); */
-    background-color: #202020;
+    /* background-color: #202020; */
     /* background-color: var(--card-color); */
+    background-color: var(--bgCol2);
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
