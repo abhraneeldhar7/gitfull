@@ -21,7 +21,8 @@ export default function Home() {
       <Image src={gradientBg} className="top-0 left-0 absolute w-[100%] h-[100%] z-[-2] opacity-[0.2] invert dark:opacity-[0.2] dark:filter-none object-cover" alt="" />
       <div className={styles.heroDiv}>
         <div className="flex-1 flex flex-col gap-[20px]">
-          <h1 className={styles.heroTitle}>Turn your <span className="text-[#f9411c]">git</span> repos into social media engagement</h1>
+          <h1 className={styles.heroTitle}>
+            <span className={styles.textGradient}>Turn your</span> <span className="text-[#f9411c]">git</span> <span className={styles.textGradient}>repos into social media engagement</span></h1>
 
           <Button className={styles.heroBtn} onClick={() => {
             if (session) {
@@ -71,7 +72,14 @@ export default function Home() {
       </div>
 
 
-     <div className="h-[500px]"></div>
+      <div className="min-h-[500px]">
+
+        <h1 className={styles.sectionTitle}>
+          Not your average gpt wrapper
+        </h1>
+
+
+      </div>
 
     </div>
   )
