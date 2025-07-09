@@ -80,7 +80,7 @@ export default function Home() {
         </h1>
 
 
-        <div className="flex justify-center mt-[50px]">
+        <div className="flex justify-center mt-[50px] px-[10px]">
 
 
           <div className="w-[100%] max-w-[500px] bg-[var(--githubBg)]/40 border border-[1px] border-[var(--foreground)]/30 px-[20px] py-[10px] rounded-[20px] backdrop-blur-[5px] font-[Satoshi] font-[600]text-[var(--foreground)] pb-[20px]">
