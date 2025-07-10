@@ -115,6 +115,71 @@
 }
 
 
+.exampleDiv {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0px;
+    padding: 0px 10px;
+}
+
+.repoFiles {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    justify-content: center;
+    background-color: #001012;
+    border: 1px solid #0bf7a838;
+    padding: 10px 0px;
+    border-radius: 10px;
+    color: #b0f6df;
+    height: fit-content;
+    margin: auto auto;
+    font-family: "Inter";
+    filter: drop-shadow(0 0 12px #00ec9d7d);
+    z-index: 1;
+
+    transform: translateX(150px);
+    opacity: 0.6;
+    backdrop-filter: blur(50px);
+    filter: blur(2px);
+}
+
+.repoFiles p {
+    margin: 0px 20px;
+    overflow: hidden;
+}
+
+.repoFiles .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #009764, transparent);
+    margin: 10px 0px;
+}
+
+.editorBoxDiv {
+    flex: 1;
+    display: flex;
+    z-index: 1;
+    height: 350px;
+    width: 500px;
+    color: #b0f6df;
+    margin: auto auto;
+    background-color: #001012;
+    border: 1px solid #0bf7a838;
+    transform: translateX(-150px);
+    filter: drop-shadow(0 0 12px #00ec9d7d);
+    opacity: 0.6;
+    font-size: 18px;
+    border-radius: 10px;
+
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    filter: blur(3px);
+}
+
+
+
 
 @media (max-width:600px) {
     .main {
@@ -162,4 +227,31 @@
     .heroBtn {
         font-size: 30px;
     }
+
+    .exampleDiv {
+        flex-direction: column;
+        padding: 50px 10px;
+        position: relative;
+        /* background-color: red; */
+        margin-bottom: 100px;
+    }
+
+    .repoFiles {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        width: 100%;
+        max-width: 400px;
+        transform: translateY(0px) translateX(-50%);
+    }
+
+    .editorBoxDiv {
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateY(0px) translateX(-50%);
+        width: 100%;
+        max-width: 400px;
+    }
+
 }
