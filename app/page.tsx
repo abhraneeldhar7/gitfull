@@ -249,7 +249,7 @@ export default async function LandingpageComponent() {
 
 
         <div className={styles.exampleDiv}>
-          <div className={styles.repoFiles}>
+          <div className={`${styles.repoFiles} bg-[var(--bgCol)] dark:bg-[#001012] text-[var(--foreground)] darl:text-[#b0f6df]`}>
             {gitFiles.map((file, idx) => (
               <div key={idx}>
                 {idx > 0 &&
@@ -283,7 +283,7 @@ export default async function LandingpageComponent() {
 
           </div>
 
-          <div className={styles.editorBoxDiv}>
+          <div className={`${styles.editorBoxDiv} bg-[var(--bgCo)] dark:bg-[#001012] text-[var(--foreground)] darl:text-[#b0f6df]`}>
             <pre>
               {visibleLines.map((line, index) => (
                 <div key={index}>

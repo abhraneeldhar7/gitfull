@@ -127,21 +127,20 @@
     flex-direction: column;
     font-size: 20px;
     justify-content: center;
-    background-color: #001012;
+    
     border: 1px solid #0bf7a838;
     padding: 10px 0px;
     border-radius: 10px;
-    color: #b0f6df;
+
     height: fit-content;
     margin: auto auto;
     font-family: "Inter";
     filter: drop-shadow(0 0 12px #00ec9d7d);
     z-index: 1;
 
-    transform: translateX(150px);
-    opacity: 0.3;
-    backdrop-filter: blur(50px);
-    filter: blur(2px);
+    transform: translateX(200px);
+    opacity: 0.4;
+    filter: blur(5px);
 }
 
 .repoFiles p {
@@ -162,19 +161,17 @@
     z-index: 1;
     height: 350px;
     width: 500px;
-    color: #b0f6df;
     margin: auto auto;
-    background-color: #001012;
+    
     border: 1px solid #0bf7a838;
-    transform: translateX(-150px);
+    transform: translateX(-200px);
     filter: drop-shadow(0 0 12px #00ec9d7d);
-    opacity: 0.3;
+    opacity: 0.4;
     font-size: 18px;
     border-radius: 10px;
 
     overflow: hidden;
-    backdrop-filter: blur(50px);
-    filter: blur(2px);
+    filter: blur(5px);
 }
 
 
@@ -262,6 +259,7 @@
         top: -30px;
         left: 50%;
         width: 100%;
+        padding: 0px 20px;
         max-width: 400px;
         transform: translateY(0px) translateX(-50%);
     }
@@ -272,6 +270,7 @@
         left: 50%;
         transform: translateY(0px) translateX(-50%);
         width: 100%;
+        padding: 0px 20px;
         max-width: 400px;
     }
 
