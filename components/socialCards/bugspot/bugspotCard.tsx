@@ -67,32 +67,29 @@ export default function BugspotCard({ blogData }: {
     }
     return (<div className={`${styles.main} border border-[1px] border-[var(--foreground)]/30`}>
         <div className={styles.imageHolder}>
-            <Link href={`/profile/${blogData.ownerId}`}>
-                <Image src={`https://res.cloudinary.com/dytynwrxu/image/upload/profilePics/${blogData.ownerId}.jpg`} width={40} height={40} alt="" unoptimized />
-            </Link>
+            <Image src={`https://res.cloudinary.com/dytynwrxu/image/upload/profilePics/${blogData.ownerId}.jpg`} width={40} height={40} alt="" unoptimized />
+
         </div>
         <div className={styles.mainContent}>
             <div className={styles.userDetails}>
-                <Link className={styles.name} href={`/profile/${blogData.ownerId}`}>{blogData.ownerName}</Link>
+                <p className={styles.name}>{blogData.ownerName}</p>
                 <p>{formatTimestampToTwitterStyle(blogData.updatedAt)}</p>
             </div>
-            <Link href={`/blog/${blogData.blogId}`}>
-                <div className={styles.previewText}>
-                    {!thumbnailUrl &&
-                        <p>
-                            {stripMarkdown(blogData.blogTextContent).slice(0, 400)}
-                        </p>}
-                    {thumbnailUrl &&
-                        <h1 className="text-[30px]">{blogData.blogTitle}</h1>
-                    }
-                </div>
-                {blogData.blogTextContent.length > 400 &&
-                    <p className={styles.showmoreLink}>Show more</p>
-                }
+            <div className={styles.previewText}>
+                {!thumbnailUrl &&
+                    <p>
+                        {stripMarkdown(blogData.blogTextContent).slice(0, 400)}
+                    </p>}
                 {thumbnailUrl &&
-                    <Image src={thumbnailUrl} height={200} width={150} className={styles.thumbnailImage} alt="" unoptimized />
+                    <h1 className="text-[30px]">{blogData.blogTitle}</h1>
                 }
-            </Link>
+            </div>
+            {blogData.blogTextContent.length > 400 &&
+                <p className={styles.showmoreLink}>Show more</p>
+            }
+            {thumbnailUrl &&
+                <Image src={thumbnailUrl} height={200} width={150} className={styles.thumbnailImage} alt="" unoptimized />
+            }
         </div>
 
     </div>)
