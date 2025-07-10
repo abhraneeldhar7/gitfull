@@ -13,7 +13,12 @@ import BugspotCard from "@/components/socialCards/bugspot/bugspotCard";
 import Link from "next/link";
 import { Dot } from "lucide-react";
 import { useEffect, useState } from "react";
-import { p } from "motion/react-client";
+
+
+import nextjsLogo from "../public/frameworkLogos/nextjs_gyqxdo.png"
+import reactLogo from "../public/frameworkLogos/React-icon.svg.png"
+import fastApiLogo from "../public/frameworkLogos/FastAPI_prcozs.png"
+import flutterLogo from "../public/frameworkLogos/flutter.png"
 
 export default function Home() {
   const router = useRouter();
@@ -244,7 +249,6 @@ export default async function LandingpageComponent() {
 
 
         <div className={styles.exampleDiv}>
-
           <div className={styles.repoFiles}>
             {gitFiles.map((file, idx) => (
               <div key={idx}>
@@ -255,8 +259,6 @@ export default async function LandingpageComponent() {
               </div>
             ))}
           </div>
-
-
           <div className="w-[100%] max-w-[500px] bg-[var(--githubBg)]/40 border border-[1px] border-[var(--foreground)]/30 px-[20px] py-[10px] rounded-[20px] backdrop-blur-[40px] font-[Satoshi] font-[600]text-[var(--foreground)] pb-[20px] flex-2 z-[2]">
             <h1 className="text-[30px]">Gitfull Repository</h1>
 
@@ -289,6 +291,27 @@ export default async function LandingpageComponent() {
                 </div>
               ))}
             </pre>
+          </div>
+        </div>
+
+
+        <div className={styles.worksWithDiv}>
+          <h1 className={styles.sectionTitle}>Works with</h1>
+          <div className={styles.frameworkLogoHolder}>
+
+            <div className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <Image src={nextjsLogo} alt="" unoptimized/>
+            </div>
+            <div  className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <Image src={reactLogo} alt="" unoptimized/>
+            </div>
+            <div  className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <Image className="rounded-[50%]" src={fastApiLogo} alt="" unoptimized/>
+            </div>
+            <div  className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <Image src={flutterLogo} alt="" unoptimized />
+            </div>
+
           </div>
         </div>
 

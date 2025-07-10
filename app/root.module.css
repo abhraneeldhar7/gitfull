@@ -26,8 +26,7 @@
     line-height: 1.4em;
     text-align: center;
     font-weight: 600;
-
-
+    font-family: "Satoshi";
 }
 
 .heroTitle .textGradient {
@@ -108,9 +107,9 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 600;
-    font-size: 40px;
+    font-size: 45px;
     text-align: center;
-
+    padding: 0px 10px;
     line-height: 1.2em;
 }
 
@@ -179,6 +178,23 @@
 }
 
 
+.frameworkLogoHolder {
+    padding: 10px 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.frameworkItem{
+    padding: 30px;
+    transition: all 0.2s;
+}
+.frameworkItem img {
+    height: 100px;
+    width: 100px;
+    object-fit: contain;
+}
+
 
 
 @media (max-width:600px) {
@@ -211,7 +227,7 @@
     }
 
     .heroCard1 {
-left:50%;
+        left: 50%;
         transform: translateX(-50%) translateY(-230px) scale(0.7);
     }
 
@@ -227,6 +243,10 @@ left:50%;
 
     .heroBtn {
         font-size: 30px;
+    }
+
+    .sectionTitle {
+        font-size: 40px;
     }
 
     .exampleDiv {
