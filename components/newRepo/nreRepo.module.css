@@ -1,0 +1,31 @@
+.main {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: auto;
+}
+
+.socialImgHolder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 10px;
+    height: 220px;
+    width: 100%;
+    min-width: 240px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.socialImgHolder:hover{
+    transform: translateY(-5px);
+}
+
+@media (max-width:500px) {
+    .socialImgHolder{
+        min-width: 150px;
+        height: 150px;
+    }
+}

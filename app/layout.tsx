@@ -3,7 +3,6 @@ import "./globals.css";
 import SessionWrapper from "@/components/sessionWrapper";
 import { ThemeProviders } from "./themeProviders";
 import Footer from "@/components/footer";
-import TabBar from "@/components/tabBar/tabBar";
 
 
 export const metadata: Metadata = {
@@ -22,9 +21,8 @@ export default function RootLayout({
         <SessionWrapper>
           <ThemeProviders>
             <div className="relative">
-              <TabBar />
+              
               {children}
-
               <Footer />
 
             </div>
