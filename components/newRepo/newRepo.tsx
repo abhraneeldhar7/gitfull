@@ -142,7 +142,7 @@ export default function NewRepo() {
                 }}>
                     <Image src={githubBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
                     {socialCard.includes(1) &&
-                        <CheckSquare className="absolute left-[10px] bottom-[10px]" size={22} />
+                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
                     }
                 </div>
 
@@ -151,7 +151,7 @@ export default function NewRepo() {
                 }}>
                     <Image src={xBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
                     {socialCard.includes(2) &&
-                        <CheckSquare className="absolute left-[10px] bottom-[10px]" size={22} />
+                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
                     }
                 </div>
 
@@ -161,7 +161,7 @@ export default function NewRepo() {
                     <Image src={artisticBg} className="absolute z-[-1] top-0 left-0 h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
                     <Image src={bugspotBanner} className="absolute z-[1] h-[30px] w-[100%] object-contain " alt="" unoptimized />
                     {socialCard.includes(3) &&
-                        <CheckSquare className="absolute left-[10px] bottom-[10px] z-[2]" size={22} />
+                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px] z-[2]" size={22} />
                     }
                 </div>
 
@@ -171,7 +171,7 @@ export default function NewRepo() {
                     <Image src={linkedInBanner} className="h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
 
                     {socialCard.includes(4) &&
-                        <CheckSquare className="absolute left-[10px] bottom-[10px]" size={22} />
+                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
                     }
                 </div>
             </div>
