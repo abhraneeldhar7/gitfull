@@ -17,14 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         <SessionWrapper>
           <ThemeProviders>
-            <div className="relative">
-              
-              {children}
-              <Footer />
-
+            {children}
+            <div suppressHydrationWarning>
+            <Footer />
             </div>
           </ThemeProviders>
         </SessionWrapper>

@@ -8,15 +8,13 @@ import { useTheme } from "next-themes";
 export default function Footer() {
 
     const { theme, setTheme } = useTheme();
+    console.log(theme)
 
     return (
-        <div className="bg-[var(--bgCol)] text-[var(--foreground)]/90 px-5 pb-8 pt-2 w-full font-poppins flex flex-col">
+        <div className="bg-[var(--bgCol)] text-[var(--foreground)]/90 px-5 pb-8 pt-2 w-full font-poppins flex flex-col" >
             <div className="flex justify-between items-start flex-wrap">
                 <div className="flex flex-col mt-1 space-y-1">
-                    {/* <Link href="https://github.com/abhraneeldhar7/lazy-ping" className="flex items-center gap-1" target="_blank">
-                        Open Source <ArrowUpRight size={14} />
-                    </Link> */}
-
+                    
                     <Link href="https://abhraneeldhar.vercel.app" target="_blank" className="flex items-center gap-1" popoverTarget="_blank">
                         Contact <ArrowUpRight size={14} />
                     </Link>

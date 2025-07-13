@@ -19,3 +19,27 @@ export interface BlogType {
   bookmarks: number;
   commentsNumber: number;
 }
+
+
+export interface pathChunkObject {
+  path: string;
+  sha: string;
+  size: number;
+  url: string;
+  tokenEstimate: number;
+};
+
+export interface fileContentObject {
+  path: string;
+  sha: string;
+  size: number;
+  url: string;
+  tokenEstimate: number;
+  fileContent: string;
+};
+
+export interface fileSummaryObject {
+  path: string,
+  tokenEstimate: number,
+  summary: string
+}

@@ -1,6 +1,9 @@
 "use server"
 import { getServerSession } from "next-auth"
 import { options } from "../api/auth/[...nextauth]/options"
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export async function getRepos() {
     const session = await getServerSession(options);
@@ -14,4 +17,106 @@ export async function getRepos() {
 
     const repoList = await res.json();
     return JSON.parse(JSON.stringify(repoList))
+}
+
+export async function getBranches(owner: string, repo: string) {
+    const session = await getServerSession(options);
+    if (!session) return;
+    const branches = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/branches`,
+        {
+            headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+            },
+        }
+    ).then((res) => res.json());
+
+    return JSON.parse(JSON.stringify(branches))
+}
+
+export async function getRepoTree(owner: string, repo: string, branch: string) {
+    const session = await getServerSession(options);
+    if (!session) return;
+    console.log("fetching: ", `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`)
+    const tree = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
+        {
+            headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+            },
+        }
+    ).then((res) => res.json());
+
+    return JSON.parse(JSON.stringify(tree))
+}
+
+
+
+export async function uploadLandingPageScreenshot({
+    owner,
+    repo,
+    branch,
+}: {
+    owner: string;
+    repo: string;
+    branch: string;
+}) {
+
+    const session = await getServerSession(options);
+    if (!session) return;
+
+
+    const urlRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: {
+            Authorization: `Bearer ${session.user.accessToken}`,
+            Accept: "application/vnd.github+json"
+        }
+    });
+
+    if (!urlRes.ok) {
+        console.error("Failed to fetch GitHub Pages data:", urlRes.status);
+        return null;
+    }
+
+    const data = await urlRes.json();
+    if (!data.homepage) return;
+
+    const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(data.homepage)}&screenshot=true`;
+
+    console.log(imageUrl);
+
+    // Step 1: Get the screenshot URL from Microlink
+    const imgRes = await fetch(imageUrl);
+    const imgData = await imgRes.json();
+    const screenshotUrl = imgData?.data?.screenshot?.url;
+
+    if (!screenshotUrl) {
+        throw new Error("Failed to get screenshot URL");
+    }
+
+    // Step 2: Fetch the actual image binary
+    const screenshotRes = await fetch(screenshotUrl);
+    const arrayBuffer = await screenshotRes.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer).toString("base64");
+
+    const imageFileName = `landingpage-${uuidv4().slice(0, 4)}.png`;
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/public/assets/${imageFileName}`, {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${session.user.accessToken}`,
+            Accept: "application/vnd.github+json"
+        },
+        body: JSON.stringify({
+            message: "add landing page screenshot",
+            branch,
+            content: base64
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.json();
+        console.error("Upload failed:", err);
+    }
+
+    return imageFileName;
 }

@@ -1,10 +1,10 @@
 "use client"
-import { Check, CheckSquare, ChevronDown, ChevronRight, Github, GithubIcon, Lock, LogOut, Users } from "lucide-react"
+import { Check, CheckSquare, ChevronDown, ChevronRight, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Users } from "lucide-react"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import styles from "./nreRepo.module.css"
-import { useEffect, useState } from "react"
-import { getRepos } from "@/app/actions/githubApiCalls"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { getBranches, getRepos, getRepoTree } from "@/app/actions/githubApiCalls"
 import { timeAgo } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Image from "next/image"
@@ -14,11 +14,15 @@ import xBanner from "../../public/banners/xBanner.avif"
 import bugspotBanner from "../../public/banners/darkmode.png"
 import artisticBg from "../../public/banners/artistic-blurry-colorful-wallpaper-background.jpg"
 import linkedInBanner from "../../public/banners/linkedinBanner.png"
+import { Switch } from "../ui/switch"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { PopoverClose } from "@radix-ui/react-popover"
+import { makeReadme } from "@/app/actions/groqFuncitons"
 
 
 
 
-export default function NewRepo() {
+export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStateAction<any[] | null>> }) {
 
     const [userRepos, setUserRepos] = useState<any[] | null>(null)
     useEffect(() => {
@@ -31,7 +35,7 @@ export default function NewRepo() {
     }, [])
 
     const [selectedRepo, setSelectedRepo] = useState<any | null>(null)
-    const [socialCard, setSocialCard] = useState<number[]>([]);
+    const [socialCard, setSocialCard] = useState<number[]>([1]);
     const toggleCard = (index: number) => {
         setSocialCard((prev) =>
             prev.includes(index)
@@ -40,15 +44,31 @@ export default function NewRepo() {
         );
     };
 
+    const [autoUpdateReadme, setAutoUpdateReadme] = useState(true);
+    const [repoBranches, setRepoBranches] = useState<any[] | null>(null)
+    const [selectedBranch, setSelectedBranch] = useState<any | null>(null);
+
+
+    const [loadingTree, setLoadingTree] = useState(false);
+
     useEffect(() => {
-        console.log(socialCard)
-    }, [socialCard])
+        if (!selectedRepo) return;
+
+        const gettingTree = async () => {
+            setLoadingTree(true);
+            setRepoTree(null);
+
+            setLoadingTree(false);
+
+        }
+
+        gettingTree();
+    }, [selectedBranch])
 
     return (<div className={styles.main}>
         <div className="flex-1 flex flex-col gap-[30px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
             <h1 className="text-[30px]">Select your Repository</h1>
             <div className="flex gap-[10px] items-center">
-
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px]">
@@ -64,29 +84,38 @@ export default function NewRepo() {
                         </Button>
                     </PopoverContent>
                 </Popover>
-                <Button disabled={!selectedRepo} className="h-[45px] flex-1">
+                <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedRepo || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
+                    setLoadingTree(true);
+                    // const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
+
+                    const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name);
+                    console.log(groqRes);
+                    // setRepoTree(repoTree.tree);
+                    setLoadingTree(false)
+                }}>
                     Readme <ChevronRight />
                 </Button>
             </div>
 
-
             {selectedRepo && <>
-                <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200" >
+                <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] rounded-[7px] transition-all duration-200 border-[0px] border-[var(--foreground)]/20" >
                     <div className="flex items-center gap-[10px]">
                         <GithubIcon size={16} />
                         <p className="overflow-x-hidden max-w-[300px]">{selectedRepo.name}</p>
-
 
                         {selectedRepo.visibility == "private" &&
                             <Lock size={16} className="opacity-[0.4]" />
                         }
 
-
                         <p className="text-[12px] opacity-[0.4]">
                             {timeAgo(selectedRepo.updated_at)}
                         </p>
                     </div>
-                    <Button onClick={() => { setSelectedRepo(null) }} className="h-[35px] w-[100px]">
+                    <Button onClick={() => {
+                        setSelectedRepo(null);
+                        setSelectedBranch(null);
+                        setRepoBranches(null);
+                    }} className="h-[35px] w-[100px]">
                         Cancel
                     </Button>
                 </div>
@@ -94,16 +123,16 @@ export default function NewRepo() {
 
 
             {!selectedRepo &&
-                <ScrollArea className="h-[399px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[0px]">
+                <ScrollArea className="h-[370px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[10px]">
 
-                    <div className="bg-[var(--background)] rounded-[10px] p-[10px] flex flex-col gap-[5px]  transition-all duration-400 ease-in-out">
+                    <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px]  transition-all duration-300 ease-in-out">
 
-                        {userRepos && !selectedRepo && userRepos.map((repo, index) => (<>
+                        {userRepos && !selectedRepo && userRepos.map((repo, index) => (<div key={index}>
                             {index > 0 &&
                                 <div className="w-[100%] h-[1px] bg-[linear-gradient(to_right,transparent,var(--secondary),transparent)]"></div>
                             }
 
-                            <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200" key={index}>
+                            <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200">
                                 <div className="flex items-center gap-[10px]">
                                     <GithubIcon size={16} />
                                     <p className="overflow-x-hidden max-w-[300px]">{repo.name}</p>
@@ -118,23 +147,61 @@ export default function NewRepo() {
                                         {timeAgo(repo.updated_at)}
                                     </p>
                                 </div>
-                                <Button onClick={() => { setSelectedRepo(repo) }} className="h-[35px] w-[100px]">
+                                <Button onClick={async () => {
+                                    setSelectedRepo(repo);
+                                    // console.log(repo.owner.login, repo.name)
+                                    const branches = await getBranches(repo.owner.login, repo.name);
+                                    console.log(branches);
+                                    setSelectedBranch(branches.find((b: any) => b.name === repo.default_branch));
+                                    setRepoBranches(branches);
+                                }} className="h-[35px] w-[100px]">
                                     Select
                                 </Button>
                             </div>
-
-
-                        </>))}
+                        </div>))}
                     </div>
-                </ScrollArea>
-            }
+                </ScrollArea>}
+
+            {selectedRepo &&
+                <div className="w-[300px] flex flex-col gap-[10px]">
+                    <div className="flex justify-between gap-[10px] items-center">
+                        <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Update Readme when done</h1>    <Switch checked={autoUpdateReadme} onCheckedChange={setAutoUpdateReadme} />
+                    </div>
+
+                    <div className="flex gap-[20px] items-center">
+                        <h1 className="text-[16px] flex items-center gap-[15px]">
+                            <GitBranch size={14} />
+                            Branch</h1>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="outline" className="w-[120px]">
+                                    {!selectedBranch && <LoaderCircle className="m-auto animate-spin" size={22} />}
+                                    {selectedBranch?.name}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent asChild>
+                                <div className="p-[5px] w-[120px]">
+                                    {!repoBranches && <LoaderCircle className="m-auto animate-spin" size={22} />}
+                                    {repoBranches?.map((branch, index) => (
+                                        <PopoverClose key={index} asChild>
+                                            <Button variant="ghost" className="w-[100%]" onClick={() => {
+                                                setSelectedBranch(branch);
+                                            }}>{branch.name}</Button>
+                                        </PopoverClose>
+                                    ))}
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>}
+
         </div>
 
 
 
-        <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2">
+        <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2 mt-[10px]">
             <h1 className="text-[30px]">
-                Generate Content For
+                Choose Platform
             </h1>
             <div className="w-[100%] flex flex-wrap gap-[10px]">
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(1) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(1) && "opacity-[0.4]"}`} onClick={() => {
@@ -147,15 +214,18 @@ export default function NewRepo() {
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(2) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(2) && "opacity-[0.4]"}`} onClick={() => {
+                    return
                     toggleCard(2);
                 }}>
                     <Image src={xBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
                     {socialCard.includes(2) &&
                         <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
                     }
+
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(3) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(3) && "opacity-[0.4]"}`} onClick={() => {
+                    return
                     toggleCard(3);
                 }}>
                     <Image src={artisticBg} className="absolute z-[-1] top-0 left-0 h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
@@ -166,6 +236,7 @@ export default function NewRepo() {
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(4) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(4) && "opacity-[0.4]"}`} onClick={() => {
+                    return
                     toggleCard(4);
                 }}>
                     <Image src={linkedInBanner} className="h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
@@ -175,6 +246,8 @@ export default function NewRepo() {
                     }
                 </div>
             </div>
+            <p className="text-center text-[15px] opacity-[0.5]">Social posts comming soon</p>
         </div>
-    </div>)
+
+    </div >)
 }
