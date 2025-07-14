@@ -1,0 +1,212 @@
+.main {
+    font-family: "Poppins";
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0px auto;
+    padding-bottom: 20px;
+}
+
+
+
+
+
+.markdownDiv {
+    font-family: "Satoshi", "Poppins";
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--foreground);
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 20px;
+}
+
+/* Improved heading hierarchy with consistent spacing */
+.markdownDiv h1 {
+    font-size: 2.5rem;
+    margin: 2.5rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
+    line-height: 1.2;
+    margin-top: 20px;
+}
+
+.markdownDiv h2 {
+    font-size: 2rem;
+    margin: 2.25rem 0 1.25rem;
+    line-height: 1.25;
+}
+
+.markdownDiv h3 {
+    font-size: 1.75rem;
+    margin: 2rem 0 1rem;
+    line-height: 1.3;
+}
+
+.markdownDiv h4 {
+    font-size: 1.5rem;
+    margin: 1.75rem 0 0.9rem;
+}
+
+.markdownDiv h5 {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 0.8rem;
+}
+
+.markdownDiv h6 {
+    font-size: 1.1rem;
+    margin: 1.25rem 0 0.7rem;
+    color: var(--foreground);
+}
+
+/* Enhanced link styling */
+.markdownDiv a {
+    color: #7eb6ff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    word-break: break-all;
+    white-space: normal;
+}
+
+.markdownDiv a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Refined list styling */
+.markdownDiv ul,
+.markdownDiv ol {
+    padding-left: 10px;
+    margin: 1.25rem 0;
+    position: relative;
+}
+
+.markdownDiv ul::after,
+.markdownDiv ol::after {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    width: 2px;
+    content: "";
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+.markdownDiv li {
+    margin-bottom: 0.75rem;
+    padding-left: 0.5rem;
+}
+
+.markdownDiv li::marker {
+    color: var(--foreground);
+}
+
+/* Improved table presentation */
+.markdownDiv table {
+    border-collapse: collapse;
+    border: 1px solid #3a3a3a;
+    width: 100%;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.markdownDiv th,
+.markdownDiv td {
+    border: 1px solid #3a3a3a;
+    padding: 0.85rem 1.25rem;
+}
+
+.markdownDiv th {
+    background-color: rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Enhanced code blocks */
+.markdownDiv code[class*="language-"],
+.markdownDiv pre>code {
+    display: block;
+    background-color: #192029;
+    /* background-color: var(--foreground); */
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.75rem 0;
+    overflow-x: auto;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #7eb6ff;
+    font-family: "Fira Code", "Consolas", monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #ffffff;
+
+    scrollbar-color: #3a4958 #1a232e;
+    scrollbar-width: thin;
+}
+
+/* For inline code */
+.markdownDiv :not(pre)>code {
+    background-color: rgb(29, 29, 29);
+    /* background-color: var(--foreground); */
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: "Fira Code", "Consolas", monospace;
+    color: white;
+    display: inline-block;
+    width: fit-content;
+}
+
+/* Image enhancements */
+.markdownDiv img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 2rem auto;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Paragraph spacing */
+.markdownDiv p {
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+}
+
+/* Horizontal rule styling */
+.markdownDiv hr {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+    border: 0;
+    margin: 2.5rem 0;
+}
+
+/* Blockquote styling */
+.markdownDiv blockquote {
+    border-left: 4px solid rgba(126, 182, 255, 0.6);
+    background: rgba(126, 182, 255, 0.05);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+}
+
+/* Keyboard elements */
+.markdownDiv kbd {
+    background-color: #2d2d2d;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+    font-family: monospace;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+@media(max-width:600px) {
+    .markdownDiv {
+        padding: 0px 15px;
+    }
+}

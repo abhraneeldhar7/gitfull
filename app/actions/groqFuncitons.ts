@@ -1,19 +1,24 @@
 "use server"
 import { LlamaTokenizer } from "llama-tokenizer-js";
 
-import { filterOnlyFilesTree, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
-import { getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
+import { extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
+import { getReadme, getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
 import { fileContentObject, pathChunkObject } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
+import { v4 as uuidv4 } from 'uuid';
+
+
+
 
 const API_KEY = process.env.GROQ_API!;
 const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+const openRouterApi = process.env.OPENROUTER_API_KEY
 
-
-
-export async function askGroq(prompt: string): Promise<any | null> {
+async function askGroq(prompt: string): Promise<any | null> {
+    await new Promise((r) => setTimeout(r, 2000));
     const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
@@ -33,12 +38,11 @@ export async function askGroq(prompt: string): Promise<any | null> {
             },
         ],
         temperature: 0.4,
-        max_tokens: 8192,
-        // response_format: { type: "json_object" }, // Crucial: Force JSON output
     };
 
     let attempts = 0;
     const maxAttempts = 5;
+
 
     while (attempts < maxAttempts) {
         try {
@@ -52,23 +56,17 @@ export async function askGroq(prompt: string): Promise<any | null> {
 
             // Handle rate limiting
             if (res.status === 429) {
-                const retryAfter = res.headers.get("retry-after") || "10";
-                const waitTime = parseInt(retryAfter) * 1000;
+                const retryAfter = res.headers.get("retry-after") || "60";
+                console.log(res)
+                const waitTime = (parseFloat(retryAfter) * 1000);
                 console.warn(`⏳ Rate limited. Retrying in ${retryAfter} seconds...`);
                 await new Promise((r) => setTimeout(r, waitTime));
                 attempts++;
                 continue;
             }
 
-            // Handle other errors
-            // if (!res.ok) {
-            //     const errText = await res.text();
-            //     console.error(`❌ [Groq] Request failed: ${res.status} - ${errText}`);
-            //     return null;
-            // }
-
-            // Process successful response
             const json = await res.json();
+            console.log(json)
             const content = json.choices?.[0]?.message?.content;
             console.log(content)
             if (!content) {
@@ -82,7 +80,7 @@ export async function askGroq(prompt: string): Promise<any | null> {
         } catch (error) {
             console.error("❌ [Groq] Unexpected error:", error);
             attempts++;
-            await new Promise((r) => setTimeout(r, 2000 * attempts)); // Exponential backoff
+            await new Promise((r) => setTimeout(r, 1000));
         }
     }
 
@@ -90,40 +88,31 @@ export async function askGroq(prompt: string): Promise<any | null> {
     return null;
 }
 
-// Dedicated response parser
-function parseGroqResponse(content: string): any {
-    try {
-        // Remove JSON code fences if present
-        const cleaned = content
-            .trim()
-            .replace(/^```(json)?\s*/i, "")
-            .replace(/```$/i, "")
-            .trim();
 
-        // Handle JSON responses
-        if (isLikelyJson(cleaned)) {
-            return JSON.parse(cleaned);
-        }
+async function getInitialSummary(repoFilesTree: any[]) {
+    const initialSummaryPrompt = `
+    You are a senior engineer generating a professional explaining a brief summary on a repo.
+Below is the recursive folder tree of the repository. Based only on the file and folder structure, provide a high-level summary of the project to help someone understand what the codebase is about before diving into individual files.
 
-        // Handle text responses
-        return cleaned;
-    } catch (error) {
-        console.error("❌ Failed to parse Groq response:", error);
-        return null;
-    }
+Your output will be used as context when analyzing specific code files.
+
+Focus on:
+- The probable purpose of the project
+- Major technologies or frameworks likely used
+
+Dont try to format it using *
+Keep it simple, I need to pass this brief summary with every file chunk for better context. Avoid multiple newlines, just plain simple texts, no blank newlines between sentences, .
+
+
+File Path:
+${JSON.stringify(repoFilesTree, null, 2)}
+  `
+
+    const initialSummary = await askGroq(initialSummaryPrompt);
+    return initialSummary;
 }
 
-// Improved JSON detection
-function isLikelyJson(str: string): boolean {
-    const trimmed = str.trim();
-    return (
-        (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-        (trimmed.startsWith("[") && trimmed.endsWith("]"))
-    );
-}
-
-
-function createContextualChunks(files: any[], maxTokens = 20000) {
+function createContextualChunks(files: any[], maxTokens = 10000) {
     // 1. Precompute token estimates with directory hierarchy
     const processedFiles = files.map(file => {
         const pathParts = file.path.split('/');
@@ -145,78 +134,38 @@ function createContextualChunks(files: any[], maxTokens = 20000) {
         return acc;
     }, [[], []]);
 
-    // if (oversized.length) {
-    //     console.warn(`Oversized files skipped (${oversized.length}):`);
-    //     oversized.forEach((f: any) => console.warn(`- ${f.path} (${f.tokenEstimate} tokens)`));
-    // }
+    // Optional: log oversized files
+    if (oversized.length > 0) {
+        console.warn(`⚠️ ${oversized.length} files exceeded token limit and will be skipped:`);
+        oversized.forEach((file: any) => console.warn(`- ${file.path} (${file.tokenEstimate} tokens)`));
+    }
 
-    // 3. Group by directory with context scoring
-    const directoryGroups = validFiles.reduce((groups: any, file: any) => {
-        const dir = file.directory;
-        if (!groups[dir]) {
-            groups[dir] = {
-                files: [],
-                totalTokens: 0,
-                priority: dir.includes('src') ? 1 :
-                    dir.includes('app') ? 0.9 :
-                        dir.includes('docs') ? 0.8 : 0.5
-            };
-        }
-        groups[dir].files.push(file);
-        groups[dir].totalTokens += file.tokenEstimate;
-        return groups;
-    }, {});
+    // 3. Sort valid files by token size ASC (small files first)
+    validFiles.sort((a: any, b: any) => a.tokenEstimate - b.tokenEstimate);
 
-    // 4. Create chunks preserving context
-    const chunks = [];
-    const sortedGroups: any = Object.entries(directoryGroups)
-        .sort((a: any[], b: any[]) => b[1].priority - a[1].priority);
+    // 4. Greedily pack chunks without exceeding maxTokens
+    const chunks: any[] = [];
+    let currentChunk: any[] = [];
+    let currentTokens = 0;
 
-    for (const [dir, group] of sortedGroups) {
-        group.files.sort((a: any, b: any) =>
-            b.filename.includes('.test.') - a.filename.includes('.test.') || // Test files last
-            a.tokenEstimate - b.tokenEstimate // Smaller files first
-        );
-
-        let currentChunk = [];
-        let currentTokens = 0;
-
-        for (const file of group.files) {
-            // Start new chunk if adding would exceed limit
-            if (currentTokens + file.tokenEstimate > maxTokens) {
-                chunks.push(currentChunk);
-                currentChunk = [];
-                currentTokens = 0;
-            }
-
+    for (const file of validFiles) {
+        if (currentTokens + file.tokenEstimate > maxTokens) {
+            // Push current chunk
+            chunks.push(currentChunk);
+            // Start new chunk
+            currentChunk = [file];
+            currentTokens = file.tokenEstimate;
+        } else {
             currentChunk.push(file);
             currentTokens += file.tokenEstimate;
         }
-
-        if (currentChunk.length) chunks.push(currentChunk);
     }
 
-    // 5. Merge small chunks from related directories
-    const mergedChunks = [];
-    let mergeBuffer: any[] = [];
-    let mergeTokens = 0;
-
-    for (const chunk of chunks) {
-        const chunkTokens = chunk.reduce((sum, f) => sum + f.tokenEstimate, 0);
-        const sameRootDir = chunk[0]?.directory.split('/')[0] === mergeBuffer[0]?.directory.split('/')[0];
-
-        if (mergeTokens + chunkTokens <= maxTokens && sameRootDir) {
-            mergeBuffer.push(...chunk);
-            mergeTokens += chunkTokens;
-        } else {
-            if (mergeBuffer.length) mergedChunks.push(mergeBuffer);
-            mergeBuffer = [...chunk];
-            mergeTokens = chunkTokens;
-        }
+    if (currentChunk.length > 0) {
+        chunks.push(currentChunk);
     }
-    if (mergeBuffer.length) mergedChunks.push(mergeBuffer);
 
-    return mergedChunks;
+    return chunks;
 }
 
 async function fetchFileFromGithub(
@@ -237,7 +186,7 @@ async function fetchFileFromGithub(
     return await res.text();
 }
 
-export async function fetchFileContentFromChunk(
+async function fetchFileContentFromChunk(
     nestedArrays: pathChunkObject[][]
 ): Promise<fileContentObject[][]> {
 
@@ -277,24 +226,23 @@ export async function fetchFileContentFromChunk(
     return result;
 }
 
-
-
-export async function summarizeChunks(
+async function summarizeChunks(
     initialSummary: string,
     chunks: fileContentObject[][]
 ): Promise<string> {
     let results = "";
-
+    let chunkNumber = 0;
     for (const chunk of chunks) {
+
         const prompt = chunk
             .map(
                 (file) => `<file>\npath: ${file.path}\nfileContent:\n${file.fileContent}\n</file>`
             )
             .join('\n');
 
-        const fullPrompt = `You are making summary for the code files in a big codebase. Below is the high level summary of the project and list of file paths with their full content. How each file contributes to the big codebase. For each file:
+        const fullPrompt = `You are making summary for the code files in a big codebase.Your job is to summarize each file,how it contributes to the big codebase. For each file:
 
-        Give output in the format, nothing else no extra text, i am using you in an api:
+        Give output in the format, nothing else no extra text, i am using you in an api, the xaml structure is very important for future references, donot hallucinate that:
         <File>
         path:"path of the file"\n
         summary:"summary of the file"
@@ -305,38 +253,44 @@ export async function summarizeChunks(
         </File>
         No json, for the whole prompt, return the output in the given manner plain text.
 
-1. Explain clearly what the file does.
+1. Explain clearly, in detail what the file does.
 2. If it exports functions, components, or classes, briefly describe each.
 3. Mention what kind of module or layer this belongs to (e.g. UI, logic, routing, config, API, etc.).
 4. Describe how it connects or interacts with other parts of the project (e.g. imported/exported elsewhere, used by specific routes or components).
 5. If it seems isolated or standalone, mention that too.
 6. Summarize any patterns (like reusable hooks, layout components, shared utils, etc.).
 7. If this file looks auto-generated, write that explicitly.\n\n
+
+
+---
+Below is the high level summary of the project and list of file paths with their full content.
 <Summary>\n
 ${initialSummary}
 </summary>\n\n
 
+---
+Here are the file contents
 ${prompt}`;
 
         try {
+            console.log("summarizing chunk ", chunkNumber)
             const summary = await askGroq(fullPrompt);
-            // Transform JSON to <File> format
-            const transformed = summary?.files?.map((file: any) => {
-                return `<File>\n
-                Path: "${file.path}" \n Summary: "${file.summary}" \n </File>`;
-            }).join('\n\n');
+
+            console.log("Summarized chunk ", chunkNumber++)
 
             results = results + summary + "\n\n";
         } catch (err) {
             console.error('Error while summarizing chunk:', err);
 
         }
+        await new Promise((r) => setTimeout(r, 1000));
     }
     return results;
 }
 
 async function combineSummaryToReadme(ownerName: string, repoName: string, chunkSummaries: string) {
-    const prompt = `You are an expert technical writer. Given the following file summaries of a codebase, write a professional, clear, and concise 'README.md' for the GitHub repository. Keep the emojis. Dont give extra text or json.
+    const prompt = `You are an expert technical writer. Given the following file summaries of a codebase, write a professional, clear, and concise 'README.md' for the GitHub repository. Keep the emojis. Dont give extra text or json. Output only readme text no extra text. Dont start with saying readme or end with ticks, just the raw content of the readme document that i can copy paste as a whole in the repo.
+
 
     Name of owner:${ownerName}
     Name of repo:${repoName} 
@@ -345,7 +299,7 @@ The output must follow this exact format and use appropriate markdown syntax and
 
 ---
 # Title
-Give a title to this repo or use reponame as fallback if unsure.
+Give good looking title to this repo based on the contents, description and repo name
 
 ## 🗂️  Description
 
@@ -358,6 +312,7 @@ List the core features implemented in the project. Group them if possible based 
 ## 🗂️ Folder Structure
 
 Use a Mermaid diagram to represent the main structure. Keep it high-level and organized.
+
 
 Example:
 \`\`\`mermaid
@@ -394,46 +349,101 @@ ${chunkSummaries}
     return readmeText;
 }
 
+async function mergeReadmes(readmeA: string, readmeB: string) {
+    const prompt = `
+    You are an expert technical writer. Given the two readme files of a codebase, you job is to compare readmeA and readmeB, if there exists something that exists in readmeA but doesn't in readmeB, smoothly put those sections in readmeB, in the correct place logically, which includes sections and cover image at the begining. readmeB is the final output, in readme format, no extra texts.Only output the readme text that goes into github repo, no extra texts.
+\n\n
 
+Here are the readme files:\n
 
+    <readmeA>
+    ${readmeA}
+    </readmeA>
 
-export async function makeReadme(owner: string, repo: string, branch: string) {
-    console.log("getting tree")
-    const repoTree = await getRepoTree(owner, repo, branch);
-
-    const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
-
-    const initialSummaryPrompt = `
-      You are a senior engineer generating a professional explaining a brief summary on a repo.
-Below is the recursive folder tree of the repository. Based only on the file and folder structure, provide a high-level summary of the project to help someone understand what the codebase is about before diving into individual files.
-
-Your output will be used as context when analyzing specific code files.
-
-Focus on:
-- The probable purpose of the project
-- Major technologies or frameworks likely used
-
-Dont try to format it using *
-Keep it simple, I need to pass this brief summary with every file chunk for better context. Avoid multiple newlines, just plain simple texts, no blank newlines between sentences, .
-
-
-File Path:
-${JSON.stringify(filteredTree, null, 2)}
+    <readmeB>
+    ${readmeB}
+    </readmeB>
     `
 
-    const initialSummary = await askGroq(initialSummaryPrompt);
+    const comparedOutput = await askGroq(prompt);
+    return comparedOutput;
+}
+
+
+
+
+
+
+
+export async function makeReadme(owner: string, repo: string, branch: string, autoSave: boolean) {
+    const session = await getServerSession(options);
+    if (!session) return;
+
+    const repoTree = await getRepoTree(owner, repo, branch);
+    const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
+
+    // Getting initial summary very high level of repo, future cotnext
+    const initialSummary = await getInitialSummary(filteredTree);
+
+    // Seperate into chunks
     const filechunks = createContextualChunks(filteredTree);
+
+    // Chunks loaded with files from github
     const fileContent = await fetchFileContentFromChunk(filechunks)
+
+    // Getting summary chunk by chunk from llm
     const summaryChunkText = await summarizeChunks(initialSummary, fileContent);
+
+    // Combining into one readme
     let readmeText = await combineSummaryToReadme(owner, repo, summaryChunkText)
 
+    // compare new redme with old readme
+    const existingReadme = await getReadme(owner, repo);
+    // if (existingReadme) {
+    //     const comparedReadme = await mergeReadmes(existingReadme, readmeText)
+    //     readmeText = comparedReadme;
+    // }
 
-    const landingPageUrl = await uploadLandingPageScreenshot({ owner: owner, repo: repo, branch: branch })
 
-    if (landingPageUrl) {
-        readmeText = `![Live Screenshot](./public/assets/${landingPageUrl})\n` + readmeText
+
+
+    // if thumbnail exists in existingreadme
+    // make sure thats under the top heading
+    // do nothing, return the thang, thumbnialurl=url
+    // if no thumbnail in raedme
+    // check for deployment url
+    // fetch screenshoturl and return the thang, thumbnailurl=screenshoturl
+
+
+
+    let thumbnailUrl = extractThumbnailImage(existingReadme as string);
+    if (thumbnailUrl) {
+        readmeText = insertOrReplaceTopImage(readmeText, thumbnailUrl);
+        thumbnailUrl = null;
+    }
+    else {
+        const urlRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+            headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+                Accept: "application/vnd.github+json"
+            }
+        });
+        if (!urlRes.ok) {
+            console.error("Failed to fetch GitHub Pages data:", urlRes.status);
+            return null;
+        }
+        const ssData = await urlRes.json();
+        const deploymentLink = ssData.homepage;
+        const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(deploymentLink)}&screenshot=true`;
+        const imgRes = await fetch(imageUrl);
+        const imgData = await imgRes.json();
+        const screenshotUrl = imgData?.data?.screenshot?.url;
+        thumbnailUrl = screenshotUrl;
     }
 
 
-    return readmeText;
+    return {
+        thumbnailUrl: thumbnailUrl,
+        readmeText: readmeText
+    };
 }

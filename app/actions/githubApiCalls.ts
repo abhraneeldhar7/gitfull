@@ -51,7 +51,6 @@ export async function getRepoTree(owner: string, repo: string, branch: string) {
 }
 
 
-
 export async function uploadLandingPageScreenshot({
     owner,
     repo,
@@ -119,4 +118,86 @@ export async function uploadLandingPageScreenshot({
     }
 
     return imageFileName;
+}
+
+
+export async function getReadme(owner: string, repo: string) {
+    const session = await getServerSession(options);
+    if (!session) return;
+
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`,
+        {
+            headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+            },
+        }
+    );
+
+    if (!res.ok) {
+        console.error("Failed to fetch README:", res.statusText);
+        return null;
+    }
+
+    const data = await res.json();
+    const content = Buffer.from(data.content, 'base64').toString('utf-8');
+    return content;
+}
+
+
+
+export async function pushThumbnailtoRepo({ owner, repo, branch, screenshotUrl, imageFileName }: { owner: string, repo: string, branch: string, screenshotUrl: string, imageFileName: string }) {
+    const session = await getServerSession(options);
+    if (!session) return;
+
+
+    const screenshotRes = await fetch(screenshotUrl);
+    const arrayBuffer = await screenshotRes.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer).toString("base64");
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/public/assets/${imageFileName}`, {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${session.user.accessToken}`,
+            Accept: "application/vnd.github+json"
+        },
+        body: JSON.stringify({
+            message: "add landing page screenshot",
+            branch,
+            content: base64
+        })
+    });
+}
+
+
+export async function pushReadmetoRepo({ owner, repo, branch, readmeText }: { owner: string, repo: string, branch: string, readmeText: string }) {
+    const session = await getServerSession(options);
+    if (!session) return;
+
+    const headers = {
+        Authorization: `Bearer ${session.user.accessToken}`,
+        "Content-Type": "application/json",
+        Accept: "application/vnd.github+json",
+    };
+    // Step 1: Get current README (for its SHA)
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/README.md?ref=${branch}`, {
+        headers,
+    });
+    const data = await res.json();
+    // Step 2: Update the README
+    const update = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/README.md`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+            message: "chore: update README.md",
+            content: Buffer.from(readmeText).toString("base64"),
+            sha: data.sha,
+            branch,
+        }),
+    });
+    if (!update.ok) {
+        const error = await update.json();
+        console.error("Failed to update README:", error);
+    } else {
+        console.log("✅ README.md updated successfully!");
+    }
 }

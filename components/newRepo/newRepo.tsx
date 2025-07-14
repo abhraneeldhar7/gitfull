@@ -1,11 +1,11 @@
 "use client"
-import { Check, CheckSquare, ChevronDown, ChevronRight, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Users } from "lucide-react"
+import { Check, CheckSquare, ChevronDown, ChevronRight, CornerRightDown, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Settings, Users } from "lucide-react"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import styles from "./nreRepo.module.css"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { getBranches, getRepos, getRepoTree } from "@/app/actions/githubApiCalls"
-import { timeAgo } from "@/lib/utils"
+import { getBranches, getRepos, getRepoTree, pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
+import { extractThumbnailImage, insertOrReplaceTopImage, replaceLinkInReadme, timeAgo } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Image from "next/image"
 
@@ -18,7 +18,10 @@ import { Switch } from "../ui/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { PopoverClose } from "@radix-ui/react-popover"
 import { makeReadme } from "@/app/actions/groqFuncitons"
-
+import { Input } from "../ui/input"
+import { useStore } from "@/lib/store"
+import { v4 as uuidv4 } from "uuid"
+import { redirect } from "next/navigation"
 
 
 
@@ -28,7 +31,6 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     useEffect(() => {
         const a = async () => {
             const repos = await getRepos();
-            console.log(repos);
             setUserRepos(repos)
         }
         a();
@@ -50,6 +52,12 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
     const [loadingTree, setLoadingTree] = useState(false);
+
+    const setDashboardScreen = useStore((state) => state.setDashboardScreen);
+    const setResThumbnailUrl = useStore((state) => state.setResThumbnailUrl);
+    const setResReadmeText = useStore((state) => state.setResReadmeText);
+    const setCurrentRepoDetails = useStore((state) => state.setCurrentRepoDetails);
+
 
     useEffect(() => {
         if (!selectedRepo) return;
@@ -84,14 +92,45 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         </Button>
                     </PopoverContent>
                 </Popover>
-                <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedRepo || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
+                <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedBranch || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
                     setLoadingTree(true);
-                    // const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
+                    setDashboardScreen("loading")
+                    const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name, autoUpdateReadme);
+                    if (groqRes) {
+                        let { thumbnailUrl, readmeText } = groqRes;
+                        const imageName = `landingPage-${uuidv4()}`
+                        if (thumbnailUrl) {
+                            const oldImgLink = extractThumbnailImage(readmeText);
+                            let updatedReadmeText = readmeText;
+                            if (oldImgLink) {
+                                updatedReadmeText = replaceLinkInReadme(readmeText, oldImgLink, `./public/assets/${imageName}`)
+                            }
+                            readmeText = insertOrReplaceTopImage(updatedReadmeText, `./public/assets/${imageName}`)
+                        }
 
-                    const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name);
-                    console.log(groqRes);
-                    // setRepoTree(repoTree.tree);
-                    setLoadingTree(false)
+                        setResThumbnailUrl(thumbnailUrl);
+                        setResReadmeText(readmeText);
+                        setCurrentRepoDetails({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name });
+
+
+                        if (autoUpdateReadme) {
+                            if (thumbnailUrl) {
+                                await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
+                            }
+                            await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
+                            redirect(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
+                        }
+                        else {
+                            setDashboardScreen("editor");
+                        }
+
+
+                    }
+
+
+
+
+                    setLoadingTree(false);
                 }}>
                     Readme <ChevronRight />
                 </Button>
@@ -163,9 +202,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 </ScrollArea>}
 
             {selectedRepo &&
-                <div className="w-[300px] flex flex-col gap-[10px]">
+                <div className="w-[250px] flex flex-col gap-[10px]">
                     <div className="flex justify-between gap-[10px] items-center">
-                        <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Update Readme when done</h1>    <Switch checked={autoUpdateReadme} onCheckedChange={setAutoUpdateReadme} />
+                        <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Auto push when done</h1>    <Switch checked={autoUpdateReadme} onCheckedChange={setAutoUpdateReadme} />
                     </div>
 
                     <div className="flex gap-[20px] items-center">
@@ -193,6 +232,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                             </PopoverContent>
                         </Popover>
                     </div>
+
                 </div>}
 
         </div>
