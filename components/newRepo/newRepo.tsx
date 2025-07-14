@@ -21,17 +21,18 @@ import { makeReadme } from "@/app/actions/groqFuncitons"
 import { Input } from "../ui/input"
 import { useStore } from "@/lib/store"
 import { v4 as uuidv4 } from "uuid"
-import { redirect } from "next/navigation"
+import { redirect, useRouter } from "next/navigation"
 
 
 
 export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStateAction<any[] | null>> }) {
-
+    const router = useRouter();
     const [userRepos, setUserRepos] = useState<any[] | null>(null)
     useEffect(() => {
         const a = async () => {
             const repos = await getRepos();
             setUserRepos(repos)
+            console.log(repos)
         }
         a();
     }, [])
@@ -118,7 +119,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                                 await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
                             }
                             await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
-                            redirect(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
+                            router.push(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
                         }
                         else {
                             setDashboardScreen("editor");

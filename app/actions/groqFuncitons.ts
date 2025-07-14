@@ -295,7 +295,8 @@ async function combineSummaryToReadme(ownerName: string, repoName: string, chunk
     Name of owner:${ownerName}
     Name of repo:${repoName} 
 
-The output must follow this exact format and use appropriate markdown syntax and formatting:
+The output should contain these sections below.
+Add more sections to document this codebase better if enccesary, use relevant emoji in titles like the ones mentioned. For visualizing, use the appropriate type of mermaid code in the required section.
 
 ---
 # Title
@@ -312,7 +313,6 @@ List the core features implemented in the project. Group them if possible based 
 ## 🗂️ Folder Structure
 
 Use a Mermaid diagram to represent the main structure. Keep it high-level and organized.
-
 
 Example:
 \`\`\`mermaid

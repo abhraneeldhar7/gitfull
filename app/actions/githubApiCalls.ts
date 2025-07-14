@@ -16,7 +16,11 @@ export async function getRepos() {
     });
 
     const repoList = await res.json();
-    return JSON.parse(JSON.stringify(repoList))
+    const sortedRepoList=repoList.sort((a:any, b:any) => {
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      })
+
+    return JSON.parse(JSON.stringify(sortedRepoList))
 }
 
 export async function getBranches(owner: string, repo: string) {

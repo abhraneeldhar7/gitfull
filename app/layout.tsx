@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SessionWrapper from "@/components/sessionWrapper";
 import { ThemeProviders } from "./themeProviders";
+import dynamic from "next/dynamic";
 import Footer from "@/components/footer";
 
 
@@ -15,6 +16,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>

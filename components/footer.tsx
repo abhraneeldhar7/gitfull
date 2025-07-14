@@ -4,11 +4,18 @@ import Link from "next/link";
 import { ArrowUpRight, Moon, Sun } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
 
     const { theme, setTheme } = useTheme();
+    const [isMounted, setIsMounted] = useState(false);
 
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) return null;
 
     return (
         <div className="bg-[var(--bgCol)] text-[var(--foreground)]/90 px-5 pb-8 pt-2 w-full font-poppins flex flex-col" >
