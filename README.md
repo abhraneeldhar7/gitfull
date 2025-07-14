@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GitFull: AI-Powered GitHub README Generator 🤖
+![thumbnail](./public/assets/landingPage-13511b32-52ca-42d5-80c8-0f509539a315)
+## 🗂️ Description
 
-## Getting Started
+GitFull is an innovative application that leverages AI to generate high-quality README files for GitHub repositories. This project aims to simplify the process of creating engaging and informative README files, making it easier for developers to showcase their projects. GitFull is designed for developers, maintainers, and contributors who want to create professional-looking README files without spending too much time.
 
-First, run the development server:
+The application uses a combination of GitHub API, Groq API, and Next.js to provide a seamless experience. With GitFull, users can select a repository, choose a branch, and generate a README file with a thumbnail image. The AI-powered engine analyzes the repository's file structure and content to create a well-structured README document.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Key Features
+
+### Core Features
+
+* **README Generation**: AI-powered README file generation based on repository content
+* **GitHub Integration**: Seamless integration with GitHub API for repository and branch data
+* **Thumbnail Generation**: Automatic thumbnail image generation for README files
+
+### UI Features
+
+* **Tab Bar**: Interactive tab bar for navigation
+* **Social Cards**: Social media-style cards for Twitter, LinkedIn, and Bugspot
+* **File Scroll Animation**: Animated file scroll component for README files
+
+### Authentication and Authorization
+
+* **NextAuth**: Secure authentication and authorization using NextAuth
+
+## 🗂️ Folder Structure
+
+```mermaid
+graph TD;
+  src-->app;
+  src-->components;
+  src-->lib;
+  app-->actions;
+  app-->api;
+  app-->pages;
+  components-->socialCards;
+  components-->tabBar;
+  lib-->store;
+  lib-->utils;
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Next.js**: React-based framework for building server-rendered and statically generated web applications
+* **React**: JavaScript library for building user interfaces
+* **TypeScript**: Superset of JavaScript for type safety and maintainability
+* **Tailwind CSS**: Utility-first CSS framework for styling
+* **PostCSS**: CSS post-processor for advanced styling features
+* **ESLint**: JavaScript linter for code quality and consistency
+* **Groq API**: Large language model for AI-powered content generation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚙️ Setup Instructions
 
-## Learn More
+* Clone the repository: `git clone https://github.com/abhraneeldhar7/gitfull.git`
+* Install dependencies: `npm install` or `yarn install`
+* Start the development server: `npm run dev` or `yarn dev`
+* Open your browser and navigate to `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Make sure to configure your GitHub and Groq API credentials to use the application.
