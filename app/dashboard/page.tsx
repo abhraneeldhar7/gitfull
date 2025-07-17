@@ -22,14 +22,14 @@ export default function Dashboard() {
     }, [currentRepoDetails])
     return (<>
         <div className={styles.main}>
-            {/* {dashboardScreen == "newReadme" &&
+            {dashboardScreen == "newReadme" &&
                 <NewRepo setRepoTree={setRepoTree} />
-            } */}
+            }
 
             {dashboardScreen == "loading" &&
                 <MakingContentScreen />
             }
-            <MakingContentScreen />
+            
             {dashboardScreen == "editor" &&
                 <ReadmeEditor />
             }

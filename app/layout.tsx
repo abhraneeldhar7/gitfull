@@ -5,6 +5,7 @@ import { ThemeProviders } from "./themeProviders";
 import dynamic from "next/dynamic";
 import Footer from "@/components/footer";
 import { Bounce, ToastContainer } from "react-toastify";
+import TabBar from "@/components/tabBar/tabBar";
 
 
 export const metadata: Metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({
                 theme="dark"
                 transition={Bounce}
             />
+            <TabBar />
             {children}
             <div suppressHydrationWarning>
             <Footer />

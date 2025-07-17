@@ -1,7 +1,7 @@
 "use client"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { FileScrollAnimation } from "../fileScrollAnimation/fileScrollAnimation";
-import { getGithubProfile, getLanguagePercentage, getReadme, getRepoDetails, getRepoTree } from "@/app/actions/githubApiCalls";
+import { getBranches, getGithubProfile, getLanguagePercentage, getRepoDetails, getRepoTree } from "@/app/actions/githubApiCalls";
 import { useStore } from "@/lib/store";
 
 import styles from "./makingContent.module.css"
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ArrowUpRight, GitFork, ImageIcon, Link2, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { extractThumbnailImage, filterOnlyFilesTree, removeMediaFilesTree, replaceRelativeLinks } from "@/lib/utils";
+import { getReadme } from "@/lib/singleThreadBullshi";
 
 
 const languageColors: Record<string, string> = {
@@ -58,8 +59,9 @@ type Props = {
 
 
 export default function MakingContentScreen() {
-    // const currentRepoDetails = useStore((state) => state.currentRepoDetails);
-
+    const currentRepoDetails = useStore((state) => state.currentRepoDetails);
+    // const currentRepoDetails = { owner: "abhraneeldhar7", repo: "portfolio", branch: "master" }
+    const { data: session } = useSession();
 
     const dummyFilePaths = [
         "README.md",
@@ -126,8 +128,7 @@ export default function MakingContentScreen() {
             </div>
         );
     }
-    const currentRepoDetails = { owner: "abhraneeldhar7", repo: "portfolio", branch: "master" }
-    const { data: session } = useSession();
+
 
 
     const [filePathNames, setFilePathNames] = useState(dummyFilePaths)
@@ -142,63 +143,89 @@ export default function MakingContentScreen() {
 
     const [thumbnailUrl, setThumbnailUrl] = useState<string | boolean | null>(null)
 
+    function sanitizeLink(link: string) {
+        if (link.startsWith('http')) return link;
+        if (!currentRepoDetails) return "";
+        return `https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/raw/${currentRepoDetails.branch}/${link}`;
+    }
+    useEffect(() => {
+        console.log("useeffect run")
+        if (currentRepoDetails == null) return;
+
+        const getAll = async () => {
+
+
+
+            const gettingTree = async () => {
+                const repoTree = await getRepoTree(currentRepoDetails.owner, currentRepoDetails.repo, currentRepoDetails.branch);
+                setRepoTree(filterOnlyFilesTree(removeMediaFilesTree(repoTree.tree)));
+                setFilePathNames(repoTree.tree
+                    .map((file: any) => file.path)
+                    .sort((a: any, b: any) => a.localeCompare(b)))
+            }
+            gettingTree();
+
+            const gettingOwnerDetails = async () => {
+                const res = await getGithubProfile(currentRepoDetails.owner);
+                console.log("owner details: ", res)
+                setOwnerDetails(res);
+            }
+            gettingOwnerDetails();
+
+            const gettingRepoDetails = async () => {
+                const res = await getRepoDetails(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}`);
+                setextraRepoDetails(res);
+                console.log("repo details: ", res);
+
+
+
+                const lang = await getLanguagePercentage(res.languages_url);
+                setLanguagesPercentage(lang);
+            }
+            gettingRepoDetails();
+
+
+
+        }
+        getAll();
+    }, [])
+
+
 
     useEffect(() => {
-        if (currentRepoDetails == null) return;
-        console.log("currentrepoedtail from laoding: ", currentRepoDetails);
+        if (!currentRepoDetails || !extraRepoDetails) return;
+        if (!session) return
 
-        const gettingTree = async () => {
-            console.log("getting tree");
-            const repoTree = await getRepoTree(currentRepoDetails.owner, currentRepoDetails.repo, currentRepoDetails.branch);
-            console.log(repoTree);
-            setRepoTree(filterOnlyFilesTree(removeMediaFilesTree(repoTree.tree)));
-            setFilePathNames(repoTree.tree
-                .map((file: any) => file.path)
-                .sort((a: any, b: any) => a.localeCompare(b)))
-        }
-        gettingTree();
 
-        const gettingOwnerDetails = async () => {
-            console.log("getting owner details")
-            const res = await getGithubProfile(currentRepoDetails.owner);
-            console.log("owner detaild", res)
-            setOwnerDetails(res);
-            console.log(res);
-        }
-        gettingOwnerDetails();
+        const gettingThumbnailFromReadme = async (repoDetails: any) => {
+            const existingReadme = await getReadme(currentRepoDetails.owner, currentRepoDetails.repo, session.user.accessToken);
+            console.log("readmetext: ", existingReadme)
 
-        const gettingRepoDetails = async () => {
-            const res = await getRepoDetails(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}`);
-            setextraRepoDetails(res);
-            console.log(res);
-
-            const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(res.homepage)}&screenshot=true`;
-
-            const imgRes = await fetch(imageUrl);
-            const imgData = await imgRes.json();
-            const screenshotUrl = imgData?.data?.screenshot?.url;
-            // const screenshotUrl = null;
-            if (screenshotUrl) {
+            if (repoDetails.homepage?.length) {
+                const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(repoDetails.homepage)}&screenshot=true`;
+                console.log("getting thummbnail from livelink")
+                const imgRes = await fetch(imageUrl);
+                const imgData = await imgRes.json();
+                const screenshotUrl = imgData?.data?.screenshot?.url;
                 setThumbnailUrl(screenshotUrl);
             }
             else {
-                const existingReadme = await getReadme(currentRepoDetails.owner, currentRepoDetails.repo);
+                console.log("getting thumbnail from readme")
+
                 let thumbnailUrl = extractThumbnailImage(existingReadme as string);
+                console.log("found in readme: ", thumbnailUrl)
                 if (thumbnailUrl) {
-                    setThumbnailUrl(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/raw/${currentRepoDetails.branch}/${thumbnailUrl.slice(1, thumbnailUrl.length)}`);
+                    setThumbnailUrl(sanitizeLink(thumbnailUrl));
+                }
+                else {
+                    setThumbnailUrl("0");
                 }
             }
-
-
-
-
-            const lang = await getLanguagePercentage(res.languages_url);
-            setLanguagesPercentage(lang);
-            console.log(lang);
         }
-        gettingRepoDetails();
-    }, [])
+        console.log("starting readmethang")
+        gettingThumbnailFromReadme(extraRepoDetails)
 
+    }, [extraRepoDetails, currentRepoDetails, session])
 
 
 
@@ -225,13 +252,11 @@ export default function MakingContentScreen() {
         setcurrentlyAnalyzingFile(repoTree[currentlyAnalyzingIndex]);
 
         const timer = setTimeout(() => {
-
             const time = new Date()
             let tempLogArray = logFileArray || [{ time: time.toLocaleTimeString('en-GB'), file: repoTree[0] }];
             tempLogArray?.push({ time: time.toLocaleTimeString('en-GB'), file: repoTree[currentlyAnalyzingIndex] });
             setLogArray(tempLogArray);
             setcurrentlyAnalyzingIndex(currentlyAnalyzingIndex + 1);
-            console.log(logFileArray);
 
         }, getDelay(currentlyAnalyzingFile?.size));
 
@@ -264,9 +289,17 @@ export default function MakingContentScreen() {
                         <h1 className="text-[20px]">About</h1>
                         <div className="flex flex-col gap-[10px]">
                             <p className="text-[14px]">{extraRepoDetails.description}</p>
-                            <Link href={extraRepoDetails.homepage} target="_blank">
-                                <p className="text-[#4493f8] flex gap-[5px] text-[14px] items-center break-words">
-                                    Deployment Link <ArrowUpRight size={15} /></p></Link>
+                            {extraRepoDetails.homepage ?
+                                <Link href={extraRepoDetails.homepage} target="_blank">
+                                    <p className="text-[#4493f8] flex gap-[5px] text-[14px] items-center break-words">
+                                        Deployment Link <ArrowUpRight size={15} /></p>
+                                </Link> :
+                                <Link href="" target="_blank">
+                                    <p className="text-[#4493f8] flex gap-[5px] text-[14px] items-center break-words">
+                                        View Repository <ArrowUpRight size={15} /></p>
+                                </Link>
+                            }
+
                             <p className="flex gap-[10px] items-center text-[12px] opacity-[0.6]"><Star size={12} />{extraRepoDetails.stargazers_count} stars</p>
 
                             <p className="flex gap-[10px] items-center text-[12px] opacity-[0.6]"><GitFork size={12} />{extraRepoDetails.forks_count} forks</p>
@@ -283,14 +316,16 @@ export default function MakingContentScreen() {
 
 
             <div className={`flex-${thumbnailUrl ? "2" : "1"} mt-[10px] flex flex-col gap-[25px]`}>
-                <div className={styles.thumbnailHolder}>
-                    {thumbnailUrl &&
-                        <Image src={thumbnailUrl as string} height={100} width={300} alt="" unoptimized />
-                    }
-                    {thumbnailUrl === null && <div className={styles.loadingThumbnailDiv}>
-                        <ImageIcon size={30} className="opacity-[0.7]" />
-                    </div>}
-                </div>
+                {thumbnailUrl != "0" &&
+                    <div className={styles.thumbnailHolder}>
+                        {thumbnailUrl &&
+                            <Image src={thumbnailUrl as string} height={100} width={300} alt="" unoptimized />
+                        }
+                        {thumbnailUrl === null && <div className={styles.loadingThumbnailDiv}>
+                            <ImageIcon size={30} className="opacity-[0.7]" />
+                        </div>}
+                    </div>
+                }
 
                 <div className="flex flex-col gap-[5px]">
                     <h1 className="text-[20px]">Parsing Files</h1>
@@ -298,7 +333,13 @@ export default function MakingContentScreen() {
                 </div>
             </div>
 
-            <div className="flex-1 w-[100%]">
+            <div className={styles.logsMain}>
+                <div className="rounded-[15px] bg-[var(--bgCol2)] flex flex-col justify-between py-[10px] px-[10px] gap-[20px]">
+                    <p>Read our top articles in the meantime we cook the perfect readme for you</p>
+                    <Link className="flex gap-[5px] items-center leading-[1em] rounded-[50px] ml-auto text-[12px] py-[10px] px-[15px] text-[var(--foreground)] bg-[var(--background)]" href="https://www.bugspot.in/home" target="_blank">
+                        Visit <ArrowUpRight size={12} />
+                    </Link>
+                </div>
                 <div className="w-[100%] flex flex-col">
                     <div className={styles.logsHeading}>
                         Analyzing files
@@ -312,7 +353,7 @@ export default function MakingContentScreen() {
                                 <p className="text-ellipsis overflow-hidden whitespace-nowrap w-[200px]">
                                     analyzed {file && file.file.path.split("/")[file.file.path.split("/").length - 1]}
                                 </p>
-                                <div className="w-[40px] ml-auto bg-[#007a4d] rounded-[30px] text-center text-[10px]">
+                                <div className="w-[40px] ml-auto bg-[#007a4d] rounded-[30px] text-center text-[10px] text-[white]">
                                     Done
                                 </div>
                             </div>
@@ -324,7 +365,6 @@ export default function MakingContentScreen() {
                     </div>
                 </div>
             </div>
-
         </div>
     </>)
 }

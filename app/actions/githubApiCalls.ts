@@ -126,7 +126,7 @@ export async function uploadLandingPageScreenshot({
 }
 
 
-export async function getReadme(owner: string, repo: string) {
+export async function getReadme(owner: string, repo: string){
     const session = await getServerSession(options);
     if (!session) return;
 
@@ -213,11 +213,13 @@ export async function getGithubProfile(username: string) {
     if (!session) return;
 
     const res = await fetch(`https://api.github.com/users/${username}`,
-        {headers: {
+        {
+            headers: {
                 Authorization: `Bearer ${session.user.accessToken}`,
                 "Content-Type": "application/json",
                 Accept: "application/vnd.github+json"
-            }}
+            }
+        }
     )
     const user = await res.json();
     const profileInfo = {

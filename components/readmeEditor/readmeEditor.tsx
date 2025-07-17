@@ -31,7 +31,7 @@ export default function ReadmeEditor() {
     const { data: session } = useSession();
 
 
-   
+
 
     if (!currentRepoDetails) return;
 
@@ -127,7 +127,7 @@ export default function ReadmeEditor() {
 
                                 await pushReadmetoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, readmeText: updatedReadmeText || readmeText });
 
-                                router.push(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`)
+                                window.open(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`, "_blank")
                             }}>
                                 Push to repo
                             </Button>}

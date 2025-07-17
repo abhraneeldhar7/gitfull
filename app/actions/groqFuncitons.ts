@@ -456,7 +456,8 @@ export async function makeReadme(owner: string, repo: string, branch: string) {
 
 
 
-    let thumbnailUrl = extractThumbnailImage(existingReadme as string);
+    let thumbnailUrl=null;
+    if (existingReadme) thumbnailUrl = extractThumbnailImage(existingReadme as string);
     if (thumbnailUrl) {
         readmeText = insertOrReplaceTopImage(readmeText, thumbnailUrl);
         thumbnailUrl = null;

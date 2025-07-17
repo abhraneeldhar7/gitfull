@@ -114,7 +114,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
                 }
                 await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
-                router.push(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
+                window.open(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`, "_blank")
             }
             else {
                 setDashboardScreen("editor");
