@@ -1,75 +1,71 @@
 import { File, FileTerminal } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
+import { Button } from '../ui/button';
 
 export const FileScrollAnimation = ({ filePaths }: { filePaths: string[] }) => {
-    // Sample file paths - replace with your actual data
 
-
-    const [displayedFiles, setDisplayedFiles] = useState<string[]>([]);
-    const [scrollIndex, setScrollIndex] = useState(0);
-    const scrollInterval = useRef<NodeJS.Timeout | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Initialize with first 7 files
+
+    function scrollDownOverTime(duration = 10000) {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const targetScroll = container.scrollHeight - container.clientHeight;
+
+        function startAnimationCycle() {
+            const startTime = performance.now();
+
+            function animateScroll(currentTime: number) {
+                if (!container) return;
+
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1); // 0 to 1
+
+                container.scrollTop = targetScroll * progress;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                } else {
+                    // Reset to top and restart scroll
+                    container.scrollTop = 0;
+                    requestAnimationFrame(() => startAnimationCycle());
+                }
+            }
+
+            requestAnimationFrame(animateScroll);
+        }
+
+        startAnimationCycle();
+    }
+
+
     useEffect(() => {
-        setDisplayedFiles(filePaths.slice(0, 7));
+        scrollDownOverTime(filePaths.length * 1000);
     }, []);
 
-    // Set up auto-scrolling
-    useEffect(() => {
-        scrollInterval.current = setInterval(() => {
-            setScrollIndex(prev => (prev + 1) % filePaths.length);
-        }, 1000);
-
-        return () => {
-            if (scrollInterval.current) {
-                clearInterval(scrollInterval.current);
-            }
-        };
-    }, [filePaths.length]);
-
-
-    useEffect(() => {
-        const newFiles = [];
-        for (let i = 0; i < 7; i++) {
-            const index = (scrollIndex + i) % filePaths.length;
-            newFiles.push(filePaths[index]);
-        }
-        setDisplayedFiles(newFiles);
-    }, [scrollIndex, filePaths]);
-
     return (
-        <div className="w-[350px] mx-auto">
-            <div
-                ref={containerRef}
-                className="relative overflow-hidden"
-            >
+        <div className="w-[350px]">
+            <div className="relative overflow-hidden">
+
                 {/* Top fade gradient */}
                 <div className="absolute top-0 left-0 right-0 h-[100px] bg-gradient-to-b from-[var(--background)] to-transparent z-10 pointer-events-none"></div>
 
                 {/* File list container */}
-                <div className="py-[10px] max-h-[220px] overflow-hidden">
-                    {displayedFiles.map((file, index) => (
-                        <div
-                            key={`${file}-${index}`}
-                            className="px-4 py-2.5 group transition-all duration-300"
-                        >
-                            <div className="flex items-center gap-[10px]">
-                                <FileTerminal />
-                                <span className="text-[var(--foreground)] font-[Satoshi] text-[20px] truncate group-hover:text-white transition-colors cursor-pointer select-none">
-                                    {file}
-                                </span>
-                            </div>
+                <div ref={containerRef} className="py-[10px] max-h-[220px] overflow-hidden flex flex-col gap-[6px]">
+                    {filePaths.map((file, index) => (
+                        <div key={index} className="flex items-center gap-[10px] text-[18px] font-{Inter} w-[100%] break-words">
+                            <FileTerminal size={18} /> <p className="whitespace-nowrap overflow-hidden text-ellipsis">{file}</p>
+
                         </div>
                     ))}
                 </div>
+
 
                 {/* Bottom fade gradient */}
                 <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-[var(--background)] from-0% to-transparent to-100% z-10 pointer-events-none"></div>
 
 
-                {/* Subtle border accents */}
-                {/* <div className="absolute inset-0 rounded-lg border border-gray-800 pointer-events-none"></div> */}
             </div>
 
 

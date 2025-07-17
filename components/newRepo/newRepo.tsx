@@ -1,10 +1,10 @@
 "use client"
-import { Check, CheckSquare, ChevronDown, ChevronRight, CornerRightDown, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Settings, Users } from "lucide-react"
+import { Check, CheckSquare, ChevronDown, ChevronRight, CornerRightDown, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Search, Settings, Users } from "lucide-react"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import styles from "./nreRepo.module.css"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { getBranches, getRepos, getRepoTree, pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import { getBranches, getRepoDetails, getRepos, getRepoTree, pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
 import { extractThumbnailImage, insertOrReplaceTopImage, replaceLinkInReadme, timeAgo } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Image from "next/image"
@@ -22,17 +22,21 @@ import { Input } from "../ui/input"
 import { useStore } from "@/lib/store"
 import { v4 as uuidv4 } from "uuid"
 import { redirect, useRouter } from "next/navigation"
-
+import { Bounce, toast } from "react-toastify"
+import { useSession } from "next-auth/react"
+import MakingContentScreen from "../makingContent/makingContent"
 
 
 export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStateAction<any[] | null>> }) {
     const router = useRouter();
-    const [userRepos, setUserRepos] = useState<any[] | null>(null)
+    const [userRepos, setUserRepos] = useState<any[] | null>(null);
+
+    const { data: session } = useSession();
+
     useEffect(() => {
         const a = async () => {
             const repos = await getRepos();
             setUserRepos(repos)
-            console.log(repos)
         }
         a();
     }, [])
@@ -54,6 +58,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
     const [loadingTree, setLoadingTree] = useState(false);
 
+
+    const dashboardScreen = useStore((state) => state.dashboardScreen);
     const setDashboardScreen = useStore((state) => state.setDashboardScreen);
     const setResThumbnailUrl = useStore((state) => state.setResThumbnailUrl);
     const setResReadmeText = useStore((state) => state.setResReadmeText);
@@ -61,7 +67,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
     useEffect(() => {
-        if (!selectedRepo) return;
+        if (!selectedRepo || !session) return;
 
         const gettingTree = async () => {
             setLoadingTree(true);
@@ -72,10 +78,52 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
         }
 
         gettingTree();
-    }, [selectedBranch])
+        console.log(selectedRepo)
+        if (session.user.login != selectedRepo.owner.login) {
+            setAutoUpdateReadme(false);
+        }
 
-    return (<div className={styles.main}>
-        <div className="flex-1 flex flex-col gap-[30px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
+        setCurrentRepoDetails({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name });
+    }, [selectedBranch, session])
+
+
+
+    const [checkingUrlLoader, setcheckingUrlLoader] = useState(false);
+    const urlInputRef = useRef<HTMLInputElement>(null);
+
+
+    const initiateMakingContent = async () => {
+        const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name);
+        if (groqRes) {
+            let { thumbnailUrl, readmeText } = groqRes;
+            const imageName = `landingPage-${uuidv4()}`
+            if (thumbnailUrl) {
+                const oldImgLink = extractThumbnailImage(readmeText);
+                let updatedReadmeText = readmeText;
+                if (oldImgLink) {
+                    updatedReadmeText = replaceLinkInReadme(readmeText, oldImgLink, `./public/assets/${imageName}`)
+                }
+                readmeText = insertOrReplaceTopImage(updatedReadmeText, `./public/assets/${imageName}`)
+            }
+
+            setResThumbnailUrl(thumbnailUrl);
+            setResReadmeText(readmeText);
+
+            if (autoUpdateReadme) {
+                if (thumbnailUrl) {
+                    await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
+                }
+                await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
+                router.push(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
+            }
+            else {
+                setDashboardScreen("editor");
+            }
+        }
+    }
+
+    return <><div className={styles.main}>
+        <div className="flex-1 flex flex-col gap-[10px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
             <h1 className="text-[30px]">Select your Repository</h1>
             <div className="flex gap-[10px] items-center">
                 <Popover>
@@ -95,47 +143,54 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 </Popover>
                 <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedBranch || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
                     setLoadingTree(true);
-                    setDashboardScreen("loading")
-                    const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name, autoUpdateReadme);
-                    if (groqRes) {
-                        let { thumbnailUrl, readmeText } = groqRes;
-                        const imageName = `landingPage-${uuidv4()}`
-                        if (thumbnailUrl) {
-                            const oldImgLink = extractThumbnailImage(readmeText);
-                            let updatedReadmeText = readmeText;
-                            if (oldImgLink) {
-                                updatedReadmeText = replaceLinkInReadme(readmeText, oldImgLink, `./public/assets/${imageName}`)
-                            }
-                            readmeText = insertOrReplaceTopImage(updatedReadmeText, `./public/assets/${imageName}`)
-                        }
-
-                        setResThumbnailUrl(thumbnailUrl);
-                        setResReadmeText(readmeText);
-                        setCurrentRepoDetails({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name });
-
-
-                        if (autoUpdateReadme) {
-                            if (thumbnailUrl) {
-                                await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
-                            }
-                            await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
-                            router.push(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
-                        }
-                        else {
-                            setDashboardScreen("editor");
-                        }
-
-
-                    }
-
-
-
-
+                    setDashboardScreen("loading");
+                    setTimeout(() => {
+                        initiateMakingContent();
+                    }, 0);
                     setLoadingTree(false);
                 }}>
                     Readme <ChevronRight />
                 </Button>
             </div>
+
+            {!selectedRepo &&
+
+
+                <div className="flex gap-[10px] items-center">
+                    <Input spellCheck={false} className="rounded-[6px]" placeholder="Or paste public url" disabled={checkingUrlLoader} ref={urlInputRef} />
+
+                    <Button loading={checkingUrlLoader} onClick={async () => {
+                        if (!urlInputRef.current?.value.trim()) return;
+                        setcheckingUrlLoader(true);
+                        const repo = await getRepoDetails(urlInputRef.current.value.trim());
+                        if (!repo) {
+                            toast('Repo not found', {
+                                position: "top-left",
+                                autoClose: 1500,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "dark",
+                                transition: Bounce,
+                            });
+                            urlInputRef.current.value = ""
+                        }
+                        else {
+                            setSelectedRepo(repo);
+                            const branches = await getBranches(repo.owner.login, repo.name);
+                            setSelectedBranch(branches.find((b: any) => b.name === repo.default_branch));
+                            if (session)
+                                setRepoBranches(branches);
+                        }
+                        setcheckingUrlLoader(false);
+                    }}>
+                        <Search />
+                    </Button>
+                </div>}
+
+
 
             {selectedRepo && <>
                 <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] rounded-[7px] transition-all duration-200 border-[0px] border-[var(--foreground)]/20" >
@@ -189,11 +244,10 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                                 </div>
                                 <Button onClick={async () => {
                                     setSelectedRepo(repo);
-                                    // console.log(repo.owner.login, repo.name)
                                     const branches = await getBranches(repo.owner.login, repo.name);
-                                    console.log(branches);
                                     setSelectedBranch(branches.find((b: any) => b.name === repo.default_branch));
                                     setRepoBranches(branches);
+                                    console.log(repo)
                                 }} className="h-[35px] w-[100px]">
                                     Select
                                 </Button>
@@ -205,7 +259,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             {selectedRepo &&
                 <div className="w-[250px] flex flex-col gap-[10px]">
                     <div className="flex justify-between gap-[10px] items-center">
-                        <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Auto push when done</h1>    <Switch checked={autoUpdateReadme} onCheckedChange={setAutoUpdateReadme} />
+                        <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Auto push when done</h1>
+                        <Switch checked={autoUpdateReadme && session?.user.login == selectedRepo.owner.login} onCheckedChange={setAutoUpdateReadme} disabled={session?.user.login != selectedRepo.owner.login} />
                     </div>
 
                     <div className="flex gap-[20px] items-center">
@@ -289,6 +344,6 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             </div>
             <p className="text-center text-[15px] opacity-[0.5]">Social posts comming soon</p>
         </div>
-
-    </div >)
+    </div >
+    </>
 }

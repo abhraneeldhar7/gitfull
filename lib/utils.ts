@@ -52,29 +52,35 @@ export function removeMediaFilesTree(tree: { path: string }[]): typeof tree {
 }
 
 
-
 export function insertOrReplaceTopImage(readmeText: string, imageUrl: string): string {
   const lines = readmeText.split('\n');
 
-  // Remove existing image lines (basic markdown image detection)
-  const filteredLines = lines.filter(line => !line.trim().match(/^!\[.*?\]\(.*?\)/));
+  // Remove any image markdown only from the top 4 lines
+  const cleanedTop = lines.slice(0, 4).filter(
+    line => !line.trim().match(/^!\[.*?\]\(.*?\)/)
+  );
+
+  const remainingLines = lines.slice(4);
+
+  const filteredLines = [...cleanedTop, ...remainingLines];
 
   // Find top-level heading
   const headingIndex = filteredLines.findIndex(line =>
-      line.trim().startsWith('# ') || line.trim().startsWith('## ')
+    line.trim().startsWith('# ') || line.trim().startsWith('## ')
   );
 
   const imageMarkdown = `![thumbnail](${imageUrl})`;
 
   if (headingIndex === -1) {
-      // No heading found — just put image at the top
-      return `${imageMarkdown}\n\n${filteredLines.join('\n')}`;
+    // No heading found — insert at very top
+    return `${imageMarkdown}\n\n${filteredLines.join('\n')}`;
   }
 
-  // Insert image below heading
+  // Insert image right below the heading
   filteredLines.splice(headingIndex + 1, 0, imageMarkdown);
   return filteredLines.join('\n');
 }
+
 
 
 export function replaceLinkInReadme(readmeText: string, oldLink: string, newLink: string): string {
@@ -88,10 +94,55 @@ export function extractThumbnailImage(readmeText: string): string | null {
   const imageRegex = /!\[[^\]]*\]\((.*?)\)/; // Markdown image format ![alt](url)
 
   for (const line of lines) {
-      const match = imageRegex.exec(line);
-      if (match && match[1]) {
-          return match[1]; // Return image URL
-      }
+    const match = imageRegex.exec(line);
+    if (match && match[1]) {
+      return match[1]; // Return image URL
+    }
   }
   return null;
+}
+
+
+export const downloadReadmeFile = (readmeText: string, resThumbnailUrl: string | null, imageName: string) => {
+  const content = readmeText;
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'README.md';
+  link.click();
+
+  URL.revokeObjectURL(url);
+
+  if (resThumbnailUrl) {
+    fetch(resThumbnailUrl, { mode: 'cors' }) // mode: 'cors' is often necessary
+      .then(response => response.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download =  imageName;
+        a.click();
+        URL.revokeObjectURL(blobUrl); // cleanup
+      })
+      .catch(console.error);
+  }
+};
+
+
+export  function replaceRelativeLinks(
+  markdown: string,
+  owner: string,
+  repo: string,
+  branch: string
+): string {
+  const githubBase = `https://github.com/${owner}/${repo}/raw/${branch}/`;
+
+  // This regex finds all markdown links or image paths starting with ./
+  const relativeLinkRegex = /(\]\()(\.\/[^)]+)(\))/g;
+
+  return markdown.replace(relativeLinkRegex, (_match, prefix, path, suffix) => {
+      return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
+  });
 }

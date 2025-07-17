@@ -1,23 +1,25 @@
 "use client"
 import Link from "next/link"
 import styles from "./readme.module.css"
-import { Github } from "lucide-react"
+import { Download, Github } from "lucide-react"
 import { Textarea } from "../ui/textarea"
-import { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
-
+import mermaid from "mermaid";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useStore } from "@/lib/store"
-import { extractThumbnailImage, insertOrReplaceTopImage, replaceLinkInReadme } from "@/lib/utils"
+import { downloadReadmeFile, extractThumbnailImage, insertOrReplaceTopImage, replaceLinkInReadme, replaceRelativeLinks } from "@/lib/utils"
 import { pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
 import { v4 as uuidv4 } from "uuid"
 import { redirect, useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 
-
+import rehypeRaw from "rehype-raw";          // Enable HTML tags
+import rehypeHighlight from "rehype-highlight";
 
 export default function ReadmeEditor() {
-    const router=useRouter();
+    const router = useRouter();
 
     const resThumbnailUrl = useStore((state) => state.resThumbnailUrl);
     const resReadmeText = useStore((state) => state.resReadmeText);
@@ -26,21 +28,10 @@ export default function ReadmeEditor() {
     const [displayScreen, setDisplayScreen] = useState<"edit" | "preview">("preview");
     const [readmeText, setReadmeText] = useState(resReadmeText);
 
-    function replaceRelativeLinks(
-        markdown: string,
-        owner: string,
-        repo: string,
-        branch: string
-    ): string {
-        const githubBase = `https://github.com/${owner}/${repo}/raw/${branch}/`;
+    const { data: session } = useSession();
 
-        // This regex finds all markdown links or image paths starting with ./
-        const relativeLinkRegex = /(\]\()(\.\/[^)]+)(\))/g;
 
-        return markdown.replace(relativeLinkRegex, (_match, prefix, path, suffix) => {
-            return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
-        });
-    }
+   
 
     if (!currentRepoDetails) return;
 
@@ -51,6 +42,32 @@ export default function ReadmeEditor() {
     }, [])
 
     const [loadingPushBtn, setLoadingPushBtn] = useState(false);
+
+    const imageName = `landingPage-${uuidv4().slice(0, 4)}`
+
+    const Mermaid = ({ code }: { code: string }) => {
+        const containerRef = useRef<HTMLDivElement>(null);
+        const id = useRef(`mermaid-${Math.random().toString(36).slice(2)}`);
+
+        useEffect(() => {
+            mermaid.initialize({ startOnLoad: false });
+
+            if (containerRef.current) {
+                // Clear any previous render
+                containerRef.current.innerHTML = "";
+
+                // Use renderAsync in modern versions
+                mermaid.render(id.current, code).then(({ svg }) => {
+                    containerRef.current!.innerHTML = svg;
+                }).catch((err) => {
+                    containerRef.current!.innerHTML = `<pre style="color:red;">Mermaid render error:\n${err.message}</pre>`;
+                });
+            }
+        }, [code]);
+
+        return <div ref={containerRef} />;
+    };
+
 
     return (<>
         <div className={styles.main}>
@@ -80,32 +97,41 @@ export default function ReadmeEditor() {
                             Preview
                         </Button>
                     </div>
-                    <Button loading={loadingPushBtn} className="bg-[#238636] h-[30px] text-[white] hover:bg-[#238636]/90" onClick={async () => {
+                    <div className="flex items-center gap-[6px]">
+                        <Button variant="outline" className="h-[30px]" onClick={() => {
+                            if (!readmeText) return;
+                            downloadReadmeFile(readmeText, resThumbnailUrl, imageName)
+                        }}>
+                            <Download />
+                        </Button>
+                        {(session?.user.login == currentRepoDetails.owner) &&
+                            <Button disabled={!(session?.user.login == currentRepoDetails.owner)} loading={loadingPushBtn} className="bg-[#238636] h-[30px] text-[white] hover:bg-[#238636]/90" onClick={async () => {
 
-                        if (!currentRepoDetails || !readmeText) return;
+                                if (!currentRepoDetails || !readmeText) return;
 
-                        setLoadingPushBtn(true);
-                        let updatedReadmeText = null
-                        if (resThumbnailUrl) {
-                            const imageName = `landingPage-${uuidv4()}`
-                            await pushThumbnailtoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, screenshotUrl: resThumbnailUrl, imageFileName: imageName });
+                                setLoadingPushBtn(true);
+                                let updatedReadmeText = null
+                                if (resThumbnailUrl) {
 
-                            const oldImgLink = extractThumbnailImage(readmeText);
+                                    await pushThumbnailtoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, screenshotUrl: resThumbnailUrl, imageFileName: imageName });
 
-                            if (oldImgLink) {
-                                updatedReadmeText = replaceLinkInReadme(readmeText, oldImgLink, `./public/assets/${imageName}`)
-                            }
-                            else {
-                                setReadmeText(insertOrReplaceTopImage(readmeText, `./public/assets/${imageName}`))
-                            }
-                        }
+                                    const oldImgLink = extractThumbnailImage(readmeText);
 
-                        await pushReadmetoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, readmeText: updatedReadmeText || readmeText });
+                                    if (oldImgLink) {
+                                        updatedReadmeText = replaceLinkInReadme(readmeText, oldImgLink, `./public/assets/${imageName}`)
+                                    }
+                                    else {
+                                        setReadmeText(insertOrReplaceTopImage(readmeText, `./public/assets/${imageName}`))
+                                    }
+                                }
 
-                        router.push(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`)
-                    }}>
-                        Push to repo
-                    </Button>
+                                await pushReadmetoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, readmeText: updatedReadmeText || readmeText });
+
+                                router.push(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`)
+                            }}>
+                                Push to repo
+                            </Button>}
+                    </div>
                 </div>
                 <div className="h-[100%] border-[1px] border-[var(--foreground)]/20 mx-[1px] rounded-bl-[10px] rounded-br-[10px]">
                     {displayScreen == "edit" &&
@@ -116,6 +142,7 @@ export default function ReadmeEditor() {
                             <ReactMarkdown
                                 children={replaceRelativeLinks(readmeText || "", currentRepoDetails.owner, currentRepoDetails.repo, currentRepoDetails.branch)}
                                 remarkPlugins={[remarkGfm]}
+                                rehypePlugins={[rehypeRaw, rehypeHighlight]}
                                 components={{
                                     a: ({ node, ...props }) => (
                                         <a

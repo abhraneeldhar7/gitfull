@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth"
 import { options } from "../api/auth/[...nextauth]/options"
 import { v4 as uuidv4 } from 'uuid';
+import { headers } from "next/headers";
 
 
 
@@ -16,9 +17,9 @@ export async function getRepos() {
     });
 
     const repoList = await res.json();
-    const sortedRepoList=repoList.sort((a:any, b:any) => {
+    const sortedRepoList = repoList.sort((a: any, b: any) => {
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      })
+    })
 
     return JSON.parse(JSON.stringify(sortedRepoList))
 }
@@ -165,7 +166,7 @@ export async function pushThumbnailtoRepo({ owner, repo, branch, screenshotUrl, 
             Accept: "application/vnd.github+json"
         },
         body: JSON.stringify({
-            message: "add landing page screenshot",
+            message: "add landing page screenshot - gitfull",
             branch,
             content: base64
         })
@@ -192,7 +193,7 @@ export async function pushReadmetoRepo({ owner, repo, branch, readmeText }: { ow
         method: "PUT",
         headers,
         body: JSON.stringify({
-            message: "chore: update README.md",
+            message: "update README.md - gitfull",
             content: Buffer.from(readmeText).toString("base64"),
             sha: data.sha,
             branch,
@@ -204,4 +205,71 @@ export async function pushReadmetoRepo({ owner, repo, branch, readmeText }: { ow
     } else {
         console.log("✅ README.md updated successfully!");
     }
+}
+
+
+export async function getGithubProfile(username: string) {
+    const session = await getServerSession(options);
+    if (!session) return;
+
+    const res = await fetch(`https://api.github.com/users/${username}`,
+        {headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+                "Content-Type": "application/json",
+                Accept: "application/vnd.github+json"
+            }}
+    )
+    const user = await res.json();
+    const profileInfo = {
+        avatar_url: user.avatar_url,
+        name: user.name,
+        bio: user.bio
+    }
+
+    return JSON.parse(JSON.stringify(profileInfo));
+
+}
+
+
+export async function getRepoDetails(url: string): Promise<any> {
+    const session = await getServerSession(options);
+    if (!session) return;
+    const match = url.match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+)(\/)?$/);
+    if (!match) {
+        return null;
+    }
+
+    const [, owner, repo] = match;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}`;
+
+    // Fetch repo info from GitHub API
+    const res = await fetch(apiUrl,
+        {
+            headers: {
+                Authorization: `Bearer ${session.user.accessToken}`,
+                "Content-Type": "application/json",
+                Accept: "application/vnd.github+json"
+            }
+        });
+    if (!res.ok) {
+        return null;
+    }
+
+    const data = await res.json();
+    return JSON.parse(JSON.stringify(data))
+}
+
+
+export async function getLanguagePercentage(url: string) {
+    const session = await getServerSession(options);
+    if (!session) return;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${session.user.accessToken}`,
+            "Content-Type": "application/json",
+            Accept: "application/vnd.github+json"
+        }
+    })
+    const data = await res.json();
+    return JSON.parse(JSON.stringify(data));
 }

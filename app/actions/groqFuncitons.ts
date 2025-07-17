@@ -2,7 +2,7 @@
 import { LlamaTokenizer } from "llama-tokenizer-js";
 
 import { extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
-import { getReadme, getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
+import { getGithubProfile, getReadme, getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
 import { fileContentObject, pathChunkObject } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
@@ -289,26 +289,36 @@ ${prompt}`;
 }
 
 async function combineSummaryToReadme(ownerName: string, repoName: string, chunkSummaries: string) {
-    const prompt = `You are an expert technical writer. Given the following file summaries of a codebase, write a professional, clear, and concise 'README.md' for the GitHub repository. Keep the emojis. Dont give extra text or json. Output only readme text no extra text. Dont start with saying readme or end with ticks, just the raw content of the readme document that i can copy paste as a whole in the repo.
+    const prompt = `You are an expert senior developer. Given the following file summaries of a codebase, write a professional, clear, detailed, out-standing, beautiful 'README.md' for the GitHub repository. Output only readme text no extra text. Dont start with saying readme or end with ticks, just the raw content of the readme document that i can copy paste as a whole in the repo.
+
+    **DONOT start or end response with anything other than the raw readme, i need to use you in an api**
 
 
     Name of owner:${ownerName}
     Name of repo:${repoName} 
 
-The output should contain these sections below.
-Add more sections to document this codebase better if enccesary, use relevant emoji in titles like the ones mentioned. For visualizing, use the appropriate type of mermaid code in the required section.
+Below given is Basic-template of the readme, add more sections which feels appropriate for the given codebase. Use detailed, out-standing, beautiful readme components and emojis.
+Use relevant emoji in titles like the ones mentioned.
+Add section GitHub Actions if necessary.
+For visualizing, use the appropriate type of mermaid code in the required section. Use appropriate emojis with section headings.
 
----
+
+**When describing a section, use appropriate filenames and paths to give reader context where necessary**
+
+Don't add sections as  Acknowledgements,License, Contributing. Your job is to technically document this whole project and it's purpose to the fullest extend while mantaining visually beautiful readme content.
+
+<Basic-template>
 # Title
-Give good looking title to this repo based on the contents, description and repo name
+Give good looking title to this repo based on the contents, description and repo name.
+Nothing else for this section, only the title.
 
 ## 🗂️  Description
 
-Briefly describe what this project does and who it's for. Write in 2-3 paragraphs with a clear tone.
+Briefly describe what this project does and who it's for. Write in 1-2 paragraphs with a clear tone.
 
 ## ✨ Key Features
 
-List the core features implemented in the project. Group them if possible based on functionality or domain area. Use all sorts of readme component hierarchy to make it look beautiful.
+List the core features implemented in the project. Group them if possible based on functionality or domain area. Use readme components hierarchy to make it look beautiful.
 
 ## 🗂️ Folder Structure
 
@@ -324,10 +334,12 @@ graph TD;
 
 ## 🛠️ Tech Stack
 
-List all major technologies, frameworks, libraries used in this project::
-- Item1
-- Item2
-- Item3
+List all major technologies, frameworks, libraries used in this project in this format.
+
+![Next.js](https://img.shields.io/badge/Next.js-000?logo=next.js&logoColor=white&style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white&style=for-the-badge)
+![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b?logo=mongodb&logoColor=white&style=for-the-badge)
+
 
 ## ⚙️ Setup Instructions
 
@@ -336,7 +348,8 @@ Give basic instructions to run the project locally. Use code blocks and bullet p
 Git clone url should be like this:
 https://github.com/${ownerName}/${repoName}.git
 
----
+</Basic-template>
+
 
 Here are the file summaries:
 
@@ -351,7 +364,8 @@ ${chunkSummaries}
 
 async function mergeReadmes(readmeA: string, readmeB: string) {
     const prompt = `
-    You are an expert technical writer. Given the two readme files of a codebase, you job is to compare readmeA and readmeB, if there exists something that exists in readmeA but doesn't in readmeB, smoothly put those sections in readmeB, in the correct place logically, which includes sections and cover image at the begining. readmeB is the final output, in readme format, no extra texts.Only output the readme text that goes into github repo, no extra texts.
+    You are an expert technical writer. Given the two readme files of a codebase, you job is to compare readmeA and readmeB, if there exists something that exists in readmeA but doesn't in readmeB, smoothly put those sections in readmeB, in the correct place logically. Remember to not break any existing structure or section in readmeB.
+    If a section is present in readmeA but not in readmeB, simply add that section, donot combine 2 sections together.
 \n\n
 
 Here are the readme files:\n
@@ -370,12 +384,22 @@ Here are the readme files:\n
 }
 
 
+export async function getUserDescription(bio: string) {
+    const prompt = `This is a bio of a github user, write a short description to describe them. No extra text other than tht in front or end. Use simple plain text.
+    
+    <Bio>
+    ${bio}
+    </Bio>
+    `
+
+    const description = await askGroq(prompt);
+    return description;
+}
 
 
 
 
-
-export async function makeReadme(owner: string, repo: string, branch: string, autoSave: boolean) {
+export async function makeReadme(owner: string, repo: string, branch: string) {
     const session = await getServerSession(options);
     if (!session) return;
 
@@ -414,6 +438,22 @@ export async function makeReadme(owner: string, repo: string, branch: string, au
     // check for deployment url
     // fetch screenshoturl and return the thang, thumbnailurl=screenshoturl
 
+    const ownerDetails = await getGithubProfile(owner);
+    const description = await getUserDescription(ownerDetails.bio)
+
+    readmeText = readmeText + `\n\n\n
+<br><br>
+<div align="center">
+<img src="${ownerDetails.avatar_url}" width="120" />
+<h3>${ownerDetails.name}</h3>
+<p>${description}</p>
+</div>
+<br>
+<p align="right">
+<img src="https://gitfull.vercel.app/appLogo.png" width="20"/>  <a href="https://gitfull.vercel.app">Made by GitFull</a>
+</p>
+    `
+
 
 
     let thumbnailUrl = extractThumbnailImage(existingReadme as string);
@@ -440,6 +480,8 @@ export async function makeReadme(owner: string, repo: string, branch: string, au
         const screenshotUrl = imgData?.data?.screenshot?.url;
         thumbnailUrl = screenshotUrl;
     }
+
+
 
 
     return {

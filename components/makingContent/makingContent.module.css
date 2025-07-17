@@ -1,0 +1,104 @@
+.main {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    font-family: "Inter";
+    gap: 30px;
+}
+
+.aboutDiv {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bgCol2);
+    gap: 15px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    width: 350px;
+}
+
+.thumbnailHolder {
+    width: 100%;
+    border-radius: 10px;
+    background-color: var(--bgCol2);
+    animation: breathing 1.2s ease-in-out infinite;
+}
+
+.thumbnailHolder img {
+    object-fit: contain;
+    border-radius: 10px;
+    width: 100%;
+
+}
+
+.loadingThumbnailDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 20em;
+}
+
+@keyframes breathing {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.logsHeading {
+    background-color: var(--background);
+    border: 1px solid rgba(255, 255, 255, 0.305);
+    padding: 10px 20px;
+}
+
+.logsContent {
+    height: 450px;
+    background-color: var(--bgCol);
+    border: 1px solid rgba(255, 255, 255, 0.159);
+    border-top: none;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 10px 0px;
+}
+
+.logsFooter {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    background-color: var(--background);
+    border: 1px solid rgba(255, 255, 255, 0.305);
+    border-top: none;
+    overflow: hidden;
+}
+
+.logsFooter h2 {
+    font-family: monospace;
+    animation: breathing 1.2s infinite;
+}
+
+
+
+@media(max-width:900px) {
+    .main {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .aboutDiv {
+        width: 100%;
+    }
+}

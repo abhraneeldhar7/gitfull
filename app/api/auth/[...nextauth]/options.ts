@@ -18,27 +18,23 @@ export const options: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, account }) {
-      // Attach access token on initial sign in
-      if (account) {
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
         token.accessToken = account.access_token;
+        token.login = (profile as any).login;
+        token.avatar_url = (profile as any).avatar_url;
       }
+
       return token;
     },
 
     async session({ session, token }) {
-      
-      if (token) {
-        session.user.accessToken = token.accessToken as string;
-      }
+      session.user.accessToken = token.accessToken as string;
+      session.user.login = token.login as string;
+      session.user.avatar_url = token.avatar_url as string;
       return session;
-    },
+    }
   },
-  
-  // pages: {
-  //   signIn: "/auth/signin",
-  //   error: "/auth/error",
-  // },
 
   secret: process.env.NEXTAUTH_SECRET,
 }
