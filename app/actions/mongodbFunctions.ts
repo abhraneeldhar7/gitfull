@@ -38,3 +38,22 @@ export async function createUser(user: userType) {
         await usersCollection.insertOne(user)
     })
 }
+
+
+export async function debitTokens(email: string, tokens: number) {
+    if (tokens <= 0) {
+        throw new Error('Token debit amount must be positive');
+    }
+
+    return withCollection("users", async (usersCollection) => {
+        await usersCollection.findOneAndUpdate(
+            {
+                email: email,
+                tokens: { $gte: tokens }
+            },
+            {
+                $inc: { tokens: -tokens },
+            }
+        );
+    });
+}

@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import styles from "./nreRepo.module.css"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { getBranches, getRepoDetails, getRepos, getRepoTree, pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
-import { estimateTokensForRepoSummarization, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree, replaceLinkInReadme, timeAgo } from "@/lib/utils"
+import { estimateTokens, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree, replaceLinkInReadme, timeAgo } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Image from "next/image"
 
@@ -99,7 +99,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             setLoadingTree(true);
             const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
             const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
-            const estimate = estimateTokensForRepoSummarization(filteredTree);
+            const estimate = estimateTokens(filteredTree);
+            console.log(estimate)
             setTokensNeeded(estimate);
             setLoadingTree(false);
         }

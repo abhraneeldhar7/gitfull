@@ -1,14 +1,14 @@
 "use server"
 import { LlamaTokenizer } from "llama-tokenizer-js";
 
-import { estimateTokensForRepoSummarization, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
+import { createContextualChunks, estimateTokens, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
 import { getGithubProfile, getReadme, getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
 import { fileContentObject, pathChunkObject } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
-import { getUserDetails } from "./mongodbFunctions";
+import { debitTokens, getUserDetails } from "./mongodbFunctions";
 
 
 
@@ -113,61 +113,7 @@ ${JSON.stringify(repoFilesTree, null, 2)}
     return initialSummary;
 }
 
-function createContextualChunks(files: any[], maxTokens = 10000) {
-    // 1. Precompute token estimates with directory hierarchy
-    const processedFiles = files.map(file => {
-        const pathParts = file.path.split('/');
-        const hierarchyWeight = 1 + (pathParts.length * 0.1); // Favor nested files
-        const tokenEstimate = Math.ceil((file.path.length + file.size) * 0.4 * hierarchyWeight);
 
-        return {
-            ...file,
-            tokenEstimate,
-            directory: pathParts.slice(0, -1).join('/') || 'root',
-            filename: pathParts[pathParts.length - 1]
-        };
-    });
-
-    // 2. Filter and warn about oversized files
-    const [oversized, validFiles] = processedFiles.reduce((acc, file) => {
-        file.tokenEstimate > maxTokens ?
-            acc[0].push(file) : acc[1].push(file);
-        return acc;
-    }, [[], []]);
-
-    // Optional: log oversized files
-    if (oversized.length > 0) {
-        console.warn(`⚠️ ${oversized.length} files exceeded token limit and will be skipped:`);
-        oversized.forEach((file: any) => console.warn(`- ${file.path} (${file.tokenEstimate} tokens)`));
-    }
-
-    // 3. Sort valid files by token size ASC (small files first)
-    validFiles.sort((a: any, b: any) => a.tokenEstimate - b.tokenEstimate);
-
-    // 4. Greedily pack chunks without exceeding maxTokens
-    const chunks: any[] = [];
-    let currentChunk: any[] = [];
-    let currentTokens = 0;
-
-    for (const file of validFiles) {
-        if (currentTokens + file.tokenEstimate > maxTokens) {
-            // Push current chunk
-            chunks.push(currentChunk);
-            // Start new chunk
-            currentChunk = [file];
-            currentTokens = file.tokenEstimate;
-        } else {
-            currentChunk.push(file);
-            currentTokens += file.tokenEstimate;
-        }
-    }
-
-    if (currentChunk.length > 0) {
-        chunks.push(currentChunk);
-    }
-
-    return chunks;
-}
 
 async function fetchFileFromGithub(
     fileUrl: string,
@@ -409,11 +355,14 @@ export async function makeReadme(owner: string, repo: string, branch: string, em
     const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
 
 
-    const estimatedTokens = estimateTokensForRepoSummarization(filteredTree)
-    console.log("estimarted token: ", estimatedTokens)
+    const tokensNeeded = estimateTokens(filteredTree)
+    console.log("estimarted token: ", tokensNeeded)
     const userDetails = await getUserDetails(email);
-    if (estimatedTokens > userDetails.tokens) {
+    if (tokensNeeded > userDetails.tokens) {
         return;
+    }
+    else {
+        await debitTokens(email, tokensNeeded)
     }
 
     // Getting initial summary very high level of repo, future cotnext

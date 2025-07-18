@@ -147,27 +147,123 @@ export function replaceRelativeLinks(
     return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
   });
 }
-export function estimateTokensForRepoSummarization(files: any[]): number {
-  const tokenPerByte = 1 / 30; // Approximate
-  const totalFileSizeBytes = files.reduce((sum, file) => sum + file.size, 0);
-  const fileContentTokens = Math.ceil(totalFileSizeBytes * tokenPerByte);
 
-  // Estimate for initial high-level summary
-  const initialSummaryTokens = 1500;
 
-  // Estimate for chunk-by-chunk summarization (usually 1:1 with content size)
-  const summarizationOverhead = fileContentTokens; // one round of summarization
+export function createContextualChunks(files: any[], maxTokens = 10000) {
+  // 1. Precompute token estimates with directory hierarchy
+  const processedFiles = files.map(file => {
+    const pathParts = file.path.split('/');
+    const hierarchyWeight = 1 + (pathParts.length * 0.1); // Favor nested files
+    const tokenEstimate = Math.ceil((file.path.length + file.size) * 0.4 * hierarchyWeight);
 
-  // Estimate for final readme generation
-  const readmeGenerationTokens = 1000;
+    return {
+      ...file,
+      tokenEstimate,
+      directory: pathParts.slice(0, -1).join('/') || 'root',
+      filename: pathParts[pathParts.length - 1]
+    };
+  });
 
-  const totalEstimatedTokens = initialSummaryTokens + fileContentTokens + summarizationOverhead + readmeGenerationTokens;
+  // 2. Filter and warn about oversized files
+  const [oversized, validFiles] = processedFiles.reduce((acc, file) => {
+    file.tokenEstimate > maxTokens ?
+      acc[0].push(file) : acc[1].push(file);
+    return acc;
+  }, [[], []]);
 
-  return totalEstimatedTokens;
+  // Optional: log oversized files
+  if (oversized.length > 0) {
+    console.warn(`⚠️ ${oversized.length} files exceeded token limit and will be skipped:`);
+    oversized.forEach((file: any) => console.warn(`- ${file.path} (${file.tokenEstimate} tokens)`));
+  }
+
+  // 3. Sort valid files by token size ASC (small files first)
+  validFiles.sort((a: any, b: any) => a.tokenEstimate - b.tokenEstimate);
+
+  // 4. Greedily pack chunks without exceeding maxTokens
+  const chunks: any[] = [];
+  let currentChunk: any[] = [];
+  let currentTokens = 0;
+
+  for (const file of validFiles) {
+    if (currentTokens + file.tokenEstimate > maxTokens) {
+      // Push current chunk
+      chunks.push(currentChunk);
+      // Start new chunk
+      currentChunk = [file];
+      currentTokens = file.tokenEstimate;
+    } else {
+      currentChunk.push(file);
+      currentTokens += file.tokenEstimate;
+    }
+  }
+
+  if (currentChunk.length > 0) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks;
 }
+
+
+
 
 export function getToken(payload: any) {
   const secret = process.env.BUGSPOT_TUNNEL_JWT!;
   const token = jwt.sign(payload, secret, { expiresIn: '5m' });
   return token
 }
+
+
+export const estimateTokens = (filteredTree: any[]) => {
+  // Constants (adjust based on your actual prompts)
+  const INITIAL_PROMPT = "Summarize this repository's purpose and structure from file paths. Identify key technologies and main functionality in 1-3 sentences. Files:\n";
+  const CHUNK_PROMPT = "Based on repository context:\n\n{{CONTEXT}}\n\nSummarize these files:\n\n{{FILES}}\nFocus on functionality, key classes, and module roles. Use markdown bullets.";
+  const COMBINE_PROMPT = "Combine these summaries into a comprehensive README:\n\n{{SUMMARIES}}";
+
+  // Token estimation parameters (adjust as needed)
+  const AVG_OUTPUT_TOKENS_PER_FILE = 150;
+  const OUTPUT_TOKENS_PER_CHUNK = 300;
+  const FINAL_README_TOKENS = 800;
+  const TOKEN_BUFFER_PERCENT = 0.8;  // 20% safety buffer
+
+  // 1. Estimate initial summary tokens
+  const filePaths = filteredTree.map(file => file.path).join('\n');
+  const initialInputTokens = Math.ceil((INITIAL_PROMPT + filePaths).length / 4);
+  const initialOutputTokens = 200;  // Brief high-level summary
+
+  // 2. Estimate chunk processing tokens
+  const chunks = createContextualChunks(filteredTree);
+  let chunkTokens = 0;
+
+  for (const chunk of chunks) {
+    // Input tokens: Prompt + file paths + content estimates
+    const chunkFilePaths = chunk.map((f: any) => f.path).join('\n');
+    const chunkContentSize = chunk.reduce((sum: any, file: any) => sum + file.size, 0);
+    const chunkInputTokens = Math.ceil((
+      CHUNK_PROMPT.replace('{{CONTEXT}}', '')  // Context added separately
+        .replace('{{FILES}}', chunkFilePaths).length
+      + initialOutputTokens  // Context from initial summary
+      + chunkContentSize / 4 // Content tokens (4 chars = ~1 token)
+    ) / 4);
+
+    // Output tokens (per chunk)
+    chunkTokens += chunkInputTokens + OUTPUT_TOKENS_PER_CHUNK;
+  }
+
+  // 3. Final combination tokens
+  const combineInputTokens = Math.ceil(COMBINE_PROMPT.length / 4) +
+    (chunks.length * OUTPUT_TOKENS_PER_CHUNK);
+  const combineOutputTokens = FINAL_README_TOKENS;
+
+  // 4. Total tokens with safety buffer
+  const totalTokens = (
+    initialInputTokens +
+    initialOutputTokens +
+    chunkTokens +
+    combineInputTokens +
+    combineOutputTokens
+  );
+
+  return Math.ceil(2 * totalTokens * (1 + TOKEN_BUFFER_PERCENT));
+};
