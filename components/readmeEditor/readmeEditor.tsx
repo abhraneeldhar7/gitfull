@@ -15,8 +15,9 @@ import { v4 as uuidv4 } from "uuid"
 import { redirect, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 
-import rehypeRaw from "rehype-raw";          // Enable HTML tags
+import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
+import MarkdownRender from "../markdownRender/markdownRender"
 
 export default function ReadmeEditor() {
     const router = useRouter();
@@ -160,6 +161,10 @@ export default function ReadmeEditor() {
                                         );
                                     },
                                 }} />
+
+                            {/* <MarkdownRender content={readmeText || "aaa"} /> */}
+
+
                         </div>}
 
                 </div>

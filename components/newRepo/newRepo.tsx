@@ -42,9 +42,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
         const a = async () => {
             const repos = await getRepos();
             setUserRepos(repos)
-
         }
         a();
+        setMakingStatus(null)
     }, [])
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     const [loadingTree, setLoadingTree] = useState(false);
 
 
-    const dashboardScreen = useStore((state) => state.dashboardScreen);
+    // const dashboardScreen = useStore((state) => state.dashboardScreen);
     const setDashboardScreen = useStore((state) => state.setDashboardScreen);
     const setResThumbnailUrl = useStore((state) => state.setResThumbnailUrl);
     const setResReadmeText = useStore((state) => state.setResReadmeText);
@@ -154,10 +154,10 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     return <><div className={styles.main}>
         <div className="flex-1 flex flex-col gap-[10px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
             <h1 className="text-[30px]">Select your Repository</h1>
-            <div className="flex gap-[10px] items-center">
+            <div className="flex gap-[10px] items-center flex-wrap">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis">
+                        <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis min-w-[300px]">
                             <Github /> abhraneeldhar <ChevronDown />
                         </Button>
                     </PopoverTrigger>
@@ -170,16 +170,11 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         </Button>
                     </PopoverContent>
                 </Popover>
-                {/* <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedBranch || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
-                    setLoadingTree(true);
-                    setDashboardScreen("loading");
-                    setTimeout(() => {
-                        initiateMakingContent();
-                    }, 0);
-                    setLoadingTree(false);
-                }}>
-                    Readme <ChevronRight />
-                </Button> */}
+
+
+                <div className="flex-1 text-right min-w-[300px]">
+                    <p className="text-[15px]"><span className="text-[#ec4927]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens</span></p>
+                </div>
             </div>
 
             {!selectedRepo &&
@@ -246,7 +241,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             </div>}
 
 
-            {!selectedRepo && 
+            {!selectedRepo &&
                 <ScrollArea className="h-[370px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[10px]">
 
                     <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px]  transition-all duration-300 ease-in-out">
@@ -276,7 +271,6 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                                     const branches = await getBranches(repo.owner.login, repo.name);
                                     setSelectedBranch(branches.find((b: any) => b.name === repo.default_branch));
                                     setRepoBranches(branches);
-                                    console.log(repo)
                                 }} className="h-[35px] w-[100px]">
                                     Select
                                 </Button>

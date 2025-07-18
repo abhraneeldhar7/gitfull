@@ -333,7 +333,7 @@ export default function MakingContentScreen() {
                     </div>
                 }
 
-                {makingStatus == "ready" ? <div className="flex flex-col gap-[10px] items-center">
+                {makingStatus === "ready" ? <div className="flex flex-col gap-[10px] items-center">
                     <h1 className="text-[20px]">Your file is ready !</h1>
                     {currentRepoDetails &&
                         <Link href={`https://github.com/${currentRepoDetails?.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails?.branch}`}>
