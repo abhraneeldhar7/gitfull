@@ -14,7 +14,7 @@ export default function LoginPage() {
         <BackgroundBeams className="z-[-1] absolute h-[100%] w-[100%]" />
 
         <div className="h-[300px] flex flex-col gap-[50px] items-center">
-            <h1 className="text-[30px]">Signin to your Gitfull account</h1>
+            <h1 className="text-[30px] px-[20px] text-center">Signin to your Gitfull account</h1>
             <Button className="w-[200px]" onClick={() => {
                 signIn("github", { callbackUrl: "/dashboard" })
             }}>
