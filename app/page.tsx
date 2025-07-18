@@ -11,8 +11,6 @@ import TwitterCard from "@/components/socialCards/twitter/twitterCard";
 import LinkedinCard from "@/components/socialCards/linkedin/linkedin";
 import BugspotCard from "@/components/socialCards/bugspot/bugspotCard";
 
-import { useEffect, useState } from "react";
-
 
 import nextjsLogo from "../public/frameworkLogos/nextjs_gyqxdo.png"
 import reactLogo from "../public/frameworkLogos/React-icon.svg.png"
@@ -23,7 +21,7 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
 
- 
+
 
 
   return (
@@ -90,8 +88,6 @@ export default function Home() {
             Not your average gpt wrapper
           </h1>
 
-
-        
 
 
           <div className={styles.worksWithDiv}>

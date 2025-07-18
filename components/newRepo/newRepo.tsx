@@ -23,7 +23,7 @@ import { useStore } from "@/lib/store"
 import { v4 as uuidv4 } from "uuid"
 import { redirect, useRouter } from "next/navigation"
 import { Bounce, toast } from "react-toastify"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import MakingContentScreen from "../makingContent/makingContent"
 
 
@@ -133,10 +133,10 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="bg-[var(--background)] flex flex-col p-[5px] gap-[5px]">
-                        <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none">
+                        <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
                             <Users /> Switch account
                         </Button>
-                        <Button variant="ghost" className="justify-start text-[red]/70 hover:text-[red] outline-none">
+                        <Button variant="ghost" className="justify-start text-[red]/70 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
                             <LogOut /> Signout
                         </Button>
                     </PopoverContent>
@@ -304,9 +304,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     toggleCard(1);
                 }}>
                     <Image src={githubBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
-                    {socialCard.includes(1) &&
+                    {/* {socialCard.includes(1) &&
                         <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    }
+                    } */}
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(2) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(2) && "opacity-[0.4]"}`} onClick={() => {
@@ -314,9 +314,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     toggleCard(2);
                 }}>
                     <Image src={xBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
-                    {socialCard.includes(2) &&
+                    {/* {socialCard.includes(2) &&
                         <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    }
+                    } */}
 
                 </div>
 
@@ -326,9 +326,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 }}>
                     <Image src={artisticBg} className="absolute z-[-1] top-0 left-0 h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
                     <Image src={bugspotBanner} className="absolute z-[1] h-[30px] w-[100%] object-contain " alt="" unoptimized />
-                    {socialCard.includes(3) &&
+                    {/* {socialCard.includes(3) &&
                         <CheckSquare color="white" className="absolute left-[10px] bottom-[10px] z-[2]" size={22} />
-                    }
+                    } */}
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(4) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(4) && "opacity-[0.4]"}`} onClick={() => {
@@ -337,9 +337,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 }}>
                     <Image src={linkedInBanner} className="h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
 
-                    {socialCard.includes(4) &&
+                    {/* {socialCard.includes(4) &&
                         <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    }
+                    } */}
                 </div>
             </div>
             <p className="text-center text-[15px] opacity-[0.5]">Social posts comming soon</p>

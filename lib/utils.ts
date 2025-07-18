@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import jwt from "jsonwebtoken";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -122,7 +123,7 @@ export const downloadReadmeFile = (readmeText: string, resThumbnailUrl: string |
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download =  imageName;
+        a.download = imageName;
         a.click();
         URL.revokeObjectURL(blobUrl); // cleanup
       })
@@ -131,7 +132,7 @@ export const downloadReadmeFile = (readmeText: string, resThumbnailUrl: string |
 };
 
 
-export  function replaceRelativeLinks(
+export function replaceRelativeLinks(
   markdown: string,
   owner: string,
   repo: string,
@@ -143,9 +144,6 @@ export  function replaceRelativeLinks(
   const relativeLinkRegex = /(\]\()(\.\/[^)]+)(\))/g;
 
   return markdown.replace(relativeLinkRegex, (_match, prefix, path, suffix) => {
-      return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
+    return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
   });
 }
-
-
-
