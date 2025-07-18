@@ -147,3 +147,27 @@ export function replaceRelativeLinks(
     return `${prefix}${githubBase}${path.slice(2)}${suffix}`;
   });
 }
+export function estimateTokensForRepoSummarization(files: any[]): number {
+  const tokenPerByte = 1 / 30; // Approximate
+  const totalFileSizeBytes = files.reduce((sum, file) => sum + file.size, 0);
+  const fileContentTokens = Math.ceil(totalFileSizeBytes * tokenPerByte);
+
+  // Estimate for initial high-level summary
+  const initialSummaryTokens = 1500;
+
+  // Estimate for chunk-by-chunk summarization (usually 1:1 with content size)
+  const summarizationOverhead = fileContentTokens; // one round of summarization
+
+  // Estimate for final readme generation
+  const readmeGenerationTokens = 1000;
+
+  const totalEstimatedTokens = initialSummaryTokens + fileContentTokens + summarizationOverhead + readmeGenerationTokens;
+
+  return totalEstimatedTokens;
+}
+
+export function getToken(payload: any) {
+  const secret = process.env.BUGSPOT_TUNNEL_JWT!;
+  const token = jwt.sign(payload, secret, { expiresIn: '5m' });
+  return token
+}

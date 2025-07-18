@@ -1,3 +1,4 @@
+"use server"
 import { getDB } from "@/lib/mongodbCS";
 import { userType } from "@/lib/types";
 import { Collection } from "mongodb";
@@ -36,10 +37,4 @@ export async function createUser(user: userType) {
     return withCollection("users", async (usersCollection) => {
         await usersCollection.insertOne(user)
     })
-}
-export function getToken(payload: any) {
-   
-    const secret = process.env.BUGSPOT_TUNNEL_JWT!;
-    const token = jwt.sign(payload, secret, { expiresIn: '5m' });
-    return token
 }

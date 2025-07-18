@@ -18,13 +18,38 @@
     min-width: 240px;
     transition: all 0.3s;
     cursor: pointer;
+    animation: mountingAnimation 0.3s ease-in-out;
 }
-.socialImgHolder:hover{
+
+.socialImgHolder:hover {
     transform: translateY(-2px);
 }
 
+.tokensDiv {
+    display: flex;
+    min-width: 300px;
+    flex-direction: column;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+    margin: auto auto;
+    animation: mountingAnimation 0.3s ease-in-out;
+}
+
+@keyframes mountingAnimation {
+    0% {
+        opacity: 0;
+        transform: translateY(5px) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}
+
 @media (max-width:500px) {
-    .socialImgHolder{
+    .socialImgHolder {
         min-width: 150px;
         height: 150px;
     }

@@ -1,11 +1,11 @@
 "use client"
-import { Check, CheckSquare, ChevronDown, ChevronRight, CornerRightDown, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Search, Settings, Users } from "lucide-react"
+import { Check, CheckSquare, ChevronDown, ChevronRight, CornerRightDown, FileCheck2, GitBranch, Github, GithubIcon, LoaderCircle, Lock, LogOut, Search, Settings, SlashIcon, Users } from "lucide-react"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import styles from "./nreRepo.module.css"
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { getBranches, getRepoDetails, getRepos, getRepoTree, pushReadmetoRepo, pushThumbnailtoRepo } from "@/app/actions/githubApiCalls"
-import { extractThumbnailImage, insertOrReplaceTopImage, replaceLinkInReadme, timeAgo } from "@/lib/utils"
+import { estimateTokensForRepoSummarization, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree, replaceLinkInReadme, timeAgo } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Image from "next/image"
 
@@ -25,6 +25,9 @@ import { redirect, useRouter } from "next/navigation"
 import { Bounce, toast } from "react-toastify"
 import { signOut, useSession } from "next-auth/react"
 import MakingContentScreen from "../makingContent/makingContent"
+import { NumberTicker } from "../magicui/number-ticker"
+import { userType } from "@/lib/types"
+import { getUserDetails } from "@/app/actions/mongodbFunctions"
 
 
 export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStateAction<any[] | null>> }) {
@@ -33,13 +36,25 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
     const { data: session } = useSession();
 
+    const [userDetails, setUserDetails] = useState<userType | null>(null)
+
     useEffect(() => {
         const a = async () => {
             const repos = await getRepos();
             setUserRepos(repos)
+
         }
         a();
     }, [])
+
+    useEffect(() => {
+        if (!session) return;
+        const a = async () => {
+            const userRes = await getUserDetails(session.user.email);
+            setUserDetails(userRes)
+        }
+        a();
+    }, [session])
 
     const [selectedRepo, setSelectedRepo] = useState<any | null>(null)
     const [socialCard, setSocialCard] = useState<number[]>([1]);
@@ -67,23 +82,28 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     const setMakingStatus = useStore((state) => state.setMakingStatus);
 
     useEffect(() => {
-        if (!selectedRepo || !session) return;
-
-        const gettingTree = async () => {
-            setLoadingTree(true);
-            setRepoTree(null);
-
-            setLoadingTree(false);
-
+        if (!selectedRepo || !session) {
+            // setTokensNeeded(null);
+            return;
         }
 
-        gettingTree();
-        console.log(selectedRepo)
+
+
         if (session.user.login != selectedRepo.owner.login) {
             setAutoUpdateReadme(false);
         }
 
         setCurrentRepoDetails({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name });
+
+        const gettingEstimatedTokens = async () => {
+            setLoadingTree(true);
+            const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
+            const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
+            const estimate = estimateTokensForRepoSummarization(filteredTree);
+            setTokensNeeded(estimate);
+            setLoadingTree(false);
+        }
+        gettingEstimatedTokens();
     }, [selectedBranch, session])
 
 
@@ -93,7 +113,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
     const initiateMakingContent = async () => {
-        const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name);
+
+        if (!session) return;
+        const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name, session.user.email);
         setMakingStatus("making");
         if (groqRes) {
             let { thumbnailUrl, readmeText } = groqRes;
@@ -126,6 +148,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
         }
     }
 
+    const [tokensNeeded, setTokensNeeded] = useState<number | null>(null)
+
     return <><div className={styles.main}>
         <div className="flex-1 flex flex-col gap-[10px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
             <h1 className="text-[30px]">Select your Repository</h1>
@@ -145,7 +169,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         </Button>
                     </PopoverContent>
                 </Popover>
-                <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedBranch || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
+                {/* <Button loading={(loadingTree && selectedRepo) ? true : false} disabled={!selectedBranch || !socialCard.length} className="h-[45px] flex-1" onClick={async () => {
                     setLoadingTree(true);
                     setDashboardScreen("loading");
                     setTimeout(() => {
@@ -154,7 +178,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     setLoadingTree(false);
                 }}>
                     Readme <ChevronRight />
-                </Button>
+                </Button> */}
             </div>
 
             {!selectedRepo &&
@@ -234,7 +258,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                             <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200">
                                 <div className="flex items-center gap-[10px]">
                                     <GithubIcon size={16} />
-                                    <p className="overflow-x-hidden max-w-[300px]">{repo.name}</p>
+                                    <p className="overflow-x-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{repo.name}</p>
 
 
                                     {repo.visibility == "private" &&
@@ -299,7 +323,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
 
-        <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2 mt-[10px]">
+        {!tokensNeeded && <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2 mt-[10px]">
             <h1 className="text-[30px]">
                 Choose Platform
             </h1>
@@ -347,7 +371,47 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 </div>
             </div>
             <p className="text-center text-[15px] opacity-[0.5]">Social posts comming soon</p>
-        </div>
+        </div>}
+
+        {tokensNeeded && userDetails &&
+            <div className={styles.tokensDiv}>
+
+                <div className="flex flex-col gap-[5px] items-center">
+                    <p className="opacity-[0.7]">Tokens needed</p>
+                    {!loadingTree ?
+                        <NumberTicker
+                            value={tokensNeeded}
+                            className="whitespace-pre-wrap text-8xl font-medium tracking-tighter text-black dark:text-white" />
+                        : <><LoaderCircle size={40} className="animate-spin" /></>}
+                    <div className="mt-[20px]">
+                        <p><span className="opacity-[0.7]">You have</span> {userDetails?.tokens} <span className="opacity-[0.7]">tokens</span></p>
+                    </div>
+                    <div className="mt-[20px] flex flex-col gap-[10px] w-[100%] max-w-[300px] ">
+                        <Button disabled={loadingTree || (tokensNeeded > userDetails.tokens)} className="text-[white] bg-[#ec4927] hover:bg-[#FA4F2D]" onClick={() => {
+                            setLoadingTree(true);
+                            setDashboardScreen("loading");
+                            setTimeout(() => {
+                                initiateMakingContent();
+                            }, 0);
+                            setLoadingTree(false);
+                        }}>
+                            Proceed
+                        </Button>
+                        <Button variant="outline" onClick={() => {
+                            setSelectedBranch(null);
+                            setSelectedRepo(null);
+                            setTokensNeeded(null);
+                            setRepoBranches(null);
+                        }}>
+                            Cancel
+                        </Button>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
     </div >
     </>
 }

@@ -1,6 +1,6 @@
 "use server"
 import { userType } from '@/lib/types';
-import { getToken } from './mongodbFunctions';
+import { getToken } from '@/lib/utils';
 
 
 export async function createUserBugspot(user: userType) {

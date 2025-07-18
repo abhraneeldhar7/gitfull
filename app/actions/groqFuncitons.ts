@@ -1,13 +1,14 @@
 "use server"
 import { LlamaTokenizer } from "llama-tokenizer-js";
 
-import { extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
+import { estimateTokensForRepoSummarization, extractThumbnailImage, filterOnlyFilesTree, insertOrReplaceTopImage, removeCSSFilesTree, removeMediaFilesTree } from "@/lib/utils";
 import { getGithubProfile, getReadme, getRepoTree, uploadLandingPageScreenshot } from "./githubApiCalls";
 import { fileContentObject, pathChunkObject } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
+import { getUserDetails } from "./mongodbFunctions";
 
 
 
@@ -66,7 +67,7 @@ async function askGroq(prompt: string): Promise<any | null> {
             }
 
             const json = await res.json();
-            console.log(json)
+            console.log("grok response: ", json)
             const content = json.choices?.[0]?.message?.content;
             console.log(content)
             if (!content) {
@@ -300,7 +301,7 @@ async function combineSummaryToReadme(ownerName: string, repoName: string, chunk
 Below given is Basic-template of the readme, add more sections which feels appropriate for the given codebase. Use detailed, out-standing, beautiful readme components and emojis.
 Use relevant emoji in titles like the ones mentioned.
 Add section GitHub Actions if necessary.
-For visualizing, use the appropriate type of mermaid code in the required section. Use appropriate emojis with section headings.
+For visualizing, use the appropriate type of mermaid code in the required section, keep in mind not to cause parsing error by special charecters. Use appropriate emojis with section headings.
 
 
 **When describing a section, use appropriate filenames and paths to give reader context where necessary**
@@ -323,6 +324,7 @@ List the core features implemented in the project. Group them if possible based 
 ## 🗂️ Folder Structure
 
 Use a Mermaid diagram to represent the main structure. Keep it high-level and organized.
+**Keep in mind not to cause parsing error by special charecters**
 
 Example:
 \`\`\`mermaid
@@ -399,15 +401,25 @@ export async function getUserDescription(bio: string) {
 
 
 
-export async function makeReadme(owner: string, repo: string, branch: string) {
+export async function makeReadme(owner: string, repo: string, branch: string, email: string) {
     const session = await getServerSession(options);
     if (!session) return;
 
     const repoTree = await getRepoTree(owner, repo, branch);
     const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
 
+
+    const estimatedTokens = estimateTokensForRepoSummarization(filteredTree)
+    console.log("estimarted token: ", estimatedTokens)
+    const userDetails = await getUserDetails(email);
+    if (estimatedTokens > userDetails.tokens) {
+        return;
+    }
+
     // Getting initial summary very high level of repo, future cotnext
+    // return;
     const initialSummary = await getInitialSummary(filteredTree);
+
 
     // Seperate into chunks
     const filechunks = createContextualChunks(filteredTree);
@@ -423,20 +435,7 @@ export async function makeReadme(owner: string, repo: string, branch: string) {
 
     // compare new redme with old readme
     const existingReadme = await getReadme(owner, repo);
-    // if (existingReadme) {
-    //     const comparedReadme = await mergeReadmes(existingReadme, readmeText)
-    //     readmeText = comparedReadme;
-    // }
 
-
-
-
-    // if thumbnail exists in existingreadme
-    // make sure thats under the top heading
-    // do nothing, return the thang, thumbnialurl=url
-    // if no thumbnail in raedme
-    // check for deployment url
-    // fetch screenshoturl and return the thang, thumbnailurl=screenshoturl
 
     const ownerDetails = await getGithubProfile(owner);
     const description = await getUserDescription(ownerDetails.bio)
@@ -456,7 +455,7 @@ export async function makeReadme(owner: string, repo: string, branch: string) {
 
 
 
-    let thumbnailUrl=null;
+    let thumbnailUrl = null;
     if (existingReadme) thumbnailUrl = extractThumbnailImage(existingReadme as string);
     if (thumbnailUrl) {
         readmeText = insertOrReplaceTopImage(readmeText, thumbnailUrl);
