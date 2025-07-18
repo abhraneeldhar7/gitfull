@@ -16,6 +16,7 @@ import nextjsLogo from "../public/frameworkLogos/nextjs_gyqxdo.png"
 import reactLogo from "../public/frameworkLogos/React-icon.svg.png"
 import fastApiLogo from "../public/frameworkLogos/FastAPI_prcozs.png"
 import flutterLogo from "../public/frameworkLogos/flutter.png"
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -34,15 +35,10 @@ export default function Home() {
             <h1 className={styles.heroTitle}>
               <span className={styles.textGradient}>Turn your</span> <span className="text-[#f9411c]">git</span> <span className={styles.textGradient}>repos into social media engagement</span></h1>
 
-            <Button className={styles.heroBtn} onClick={() => {
-              if (session) {
-                router.push("/readme");
-              }
-              else {
-                signIn("github");
-              }
-            }}>
-              Start hacking
+            <Button className={styles.heroBtn}>
+              <Link href="/login">
+                Start hacking
+              </Link>
             </Button>
 
           </div>

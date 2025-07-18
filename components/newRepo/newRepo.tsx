@@ -132,7 +132,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             <div className="flex gap-[10px] items-center">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px]">
+                        <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis">
                             <Github /> abhraneeldhar <ChevronDown />
                         </Button>
                     </PopoverTrigger>
@@ -199,8 +199,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             {selectedRepo && <>
                 <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] rounded-[7px] transition-all duration-200 border-[0px] border-[var(--foreground)]/20" >
                     <div className="flex items-center gap-[10px]">
-                        <GithubIcon size={16} />
-                        <p className="overflow-x-hidden max-w-[300px]">{selectedRepo.name}</p>
+                        <GithubIcon size={16} className="h-[16px] w-[16px]" />
+                        <p className="overflow-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{selectedRepo.name}</p>
 
                         {selectedRepo.visibility == "private" &&
                             <Lock size={16} className="opacity-[0.4]" />

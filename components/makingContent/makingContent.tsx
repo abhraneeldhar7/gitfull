@@ -268,8 +268,8 @@ export default function MakingContentScreen() {
 
 
 
-    // const makingStatus = useStore((state) => state.makingStatus);
-    const makingStatus = "ready"
+    const makingStatus = useStore((state) => state.makingStatus);
+    // const makingStatus = "ready"
 
     return (<>
         <div className={styles.main}>
