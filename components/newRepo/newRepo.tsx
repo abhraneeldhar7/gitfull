@@ -64,7 +64,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     const setResThumbnailUrl = useStore((state) => state.setResThumbnailUrl);
     const setResReadmeText = useStore((state) => state.setResReadmeText);
     const setCurrentRepoDetails = useStore((state) => state.setCurrentRepoDetails);
-
+    const setMakingStatus = useStore((state) => state.setMakingStatus);
 
     useEffect(() => {
         if (!selectedRepo || !session) return;
@@ -94,6 +94,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
     const initiateMakingContent = async () => {
         const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name);
+        setMakingStatus("making");
         if (groqRes) {
             let { thumbnailUrl, readmeText } = groqRes;
             const imageName = `landingPage-${uuidv4()}`
@@ -114,11 +115,14 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     await pushThumbnailtoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, screenshotUrl: thumbnailUrl, imageFileName: imageName });
                 }
                 await pushReadmetoRepo({ owner: selectedRepo.owner.login, repo: selectedRepo.name, branch: selectedBranch.name, readmeText: readmeText });
+
                 window.open(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`, "_blank")
+                router.push(`https://github.com/${selectedRepo.owner.login}/${selectedRepo.name}/tree/${selectedBranch.name}`)
             }
             else {
                 setDashboardScreen("editor");
             }
+            setMakingStatus("ready")
         }
     }
 

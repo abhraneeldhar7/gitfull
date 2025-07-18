@@ -128,6 +128,7 @@ export default function ReadmeEditor() {
                                 await pushReadmetoRepo({ owner: currentRepoDetails.owner, repo: currentRepoDetails.repo, branch: currentRepoDetails.branch, readmeText: updatedReadmeText || readmeText });
 
                                 window.open(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`, "_blank")
+                                router.push(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails.branch}`)
                             }}>
                                 Push to repo
                             </Button>}

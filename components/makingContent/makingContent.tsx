@@ -11,6 +11,7 @@ import { ArrowUpRight, GitFork, ImageIcon, Link2, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { extractThumbnailImage, filterOnlyFilesTree, removeMediaFilesTree, replaceRelativeLinks } from "@/lib/utils";
 import { getReadme } from "@/lib/singleThreadBullshi";
+import { Button } from "../ui/button";
 
 
 const languageColors: Record<string, string> = {
@@ -143,6 +144,7 @@ export default function MakingContentScreen() {
 
     const [thumbnailUrl, setThumbnailUrl] = useState<string | boolean | null>(null)
 
+
     function sanitizeLink(link: string) {
         if (link.startsWith('http')) return link;
         if (!currentRepoDetails) return "";
@@ -265,6 +267,10 @@ export default function MakingContentScreen() {
 
 
 
+
+    // const makingStatus = useStore((state) => state.makingStatus);
+    const makingStatus = "ready"
+
     return (<>
         <div className={styles.main}>
 
@@ -327,10 +333,21 @@ export default function MakingContentScreen() {
                     </div>
                 }
 
-                <div className="flex flex-col gap-[5px]">
-                    <h1 className="text-[20px]">Parsing Files</h1>
-                    <FileScrollAnimation filePaths={filePathNames} />
-                </div>
+                {makingStatus == "ready" ? <div className="flex flex-col gap-[10px] items-center">
+                    <h1 className="text-[20px]">Your file is ready !</h1>
+                    {currentRepoDetails &&
+                        <Link href={`https://github.com/${currentRepoDetails?.owner}/${currentRepoDetails.repo}/tree/${currentRepoDetails?.branch}`}>
+                            <Button className="w-[100%]">
+                                Go to repo
+                            </Button>
+                        </Link>
+                    }
+                </div> :
+                    <div className="flex flex-col gap-[5px]">
+                        <h1 className="text-[20px]">Parsing Files</h1>
+                        <FileScrollAnimation filePaths={filePathNames} />
+                    </div>
+                }
             </div>
 
             <div className={styles.logsMain}>

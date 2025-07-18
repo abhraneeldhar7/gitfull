@@ -13,6 +13,9 @@ export interface storeType {
     currentRepoDetails: { owner: string, repo: string, branch: string } | null;
     setCurrentRepoDetails: (newDetails: { owner: string, repo: string, branch: string }) => void;
 
+    makingStatus: string | null;
+    setMakingStatus: (newStatus: string | null) => void;
+
 }
 
 export const useStore = create<storeType>((set) => ({
@@ -26,5 +29,8 @@ export const useStore = create<storeType>((set) => ({
     setResReadmeText: (newText: string | null) => set(() => ({ resReadmeText: newText })),
 
     currentRepoDetails: null,
-    setCurrentRepoDetails: (newDetails: { owner: string, repo: string, branch: string }) => set(() => ({ currentRepoDetails: newDetails }))
+    setCurrentRepoDetails: (newDetails: { owner: string, repo: string, branch: string }) => set(() => ({ currentRepoDetails: newDetails })),
+
+    makingStatus: null,
+    setMakingStatus: (newStatus: string | null) => set(() => ({ makingStatus: newStatus }))
 }))
