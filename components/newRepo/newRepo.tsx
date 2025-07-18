@@ -221,7 +221,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
 
-            {selectedRepo && <>
+            {selectedRepo && <div className={styles.selectedRepoDiv}>
                 <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] rounded-[7px] transition-all duration-200 border-[0px] border-[var(--foreground)]/20" >
                     <div className="flex items-center gap-[10px]">
                         <GithubIcon size={16} className="h-[16px] w-[16px]" />
@@ -243,10 +243,10 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         Cancel
                     </Button>
                 </div>
-            </>}
+            </div>}
 
 
-            {!selectedRepo &&
+            {!selectedRepo && 
                 <ScrollArea className="h-[370px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[10px]">
 
                     <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px]  transition-all duration-300 ease-in-out">
@@ -256,7 +256,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                                 <div className="w-[100%] h-[1px] bg-[linear-gradient(to_right,transparent,var(--secondary),transparent)]"></div>
                             }
 
-                            <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200">
+                            <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
                                 <div className="flex items-center gap-[10px]">
                                     <GithubIcon size={16} />
                                     <p className="overflow-x-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{repo.name}</p>

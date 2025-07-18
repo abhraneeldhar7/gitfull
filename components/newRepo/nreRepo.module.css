@@ -6,6 +6,12 @@
     margin: auto;
 }
 
+.selectedRepoDiv {
+    animation: mountingAnimation 0.3s ease-in-out;
+}
+.repoItemDiv{
+    animation: mountingAnimation 0.3s ease-in-out;
+}
 .socialImgHolder {
     flex: 1;
     display: flex;
