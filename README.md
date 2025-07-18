@@ -1,6 +1,4 @@
-# GitFull: AI-Powered GitHub Repository Summarizer
-![thumbnail](./public/assets/landingPage-13511b32-52ca-42d5-80c8-0f509539a315)
-
+# GitFull: AI-Powered GitHub 
 ## 🗂️ Description
 
 GitFull is a web application designed to simplify the process of creating and managing GitHub repository READMEs. It uses AI-powered summarization to generate high-quality README content from repository code files. The application is built for developers, repository owners, and contributors who want to create engaging and informative READMEs without spending too much time.
