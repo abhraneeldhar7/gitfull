@@ -140,7 +140,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
                             <Users /> Switch account
                         </Button>
-                        <Button variant="ghost" className="justify-start text-[red]/70 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
+                        <Button variant="ghost" className="justify-start text-[red]/100 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
                             <LogOut /> Signout
                         </Button>
                     </PopoverContent>
