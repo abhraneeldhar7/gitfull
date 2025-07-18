@@ -251,9 +251,11 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                                 <div className="w-[100%] h-[1px] bg-[linear-gradient(to_right,transparent,var(--secondary),transparent)]"></div>
                             }
 
-                            <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
+                            <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px]  pl-[10px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
                                 <div className="flex items-center gap-[10px]">
-                                    <GithubIcon size={16} />
+                                    <div className="min-w-[16px]">
+                                        <GithubIcon className="h-[16px] w-[16px]" />
+                                    </div>
                                     <p className="overflow-x-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{repo.name}</p>
 
 
