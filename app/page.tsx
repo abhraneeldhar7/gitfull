@@ -167,7 +167,7 @@ export default function Home() {
                 <div className={styles.readmeFadeinDiv}>
                   <Image src={readmeData[currentIndex].thumbnail} className="rounded-[6px] w-[100%] object-contain h-[100%] shadow-md h-[250px]" height={300} width={400} alt="" unoptimized />
                 </div>
-                <div className={`flex flex-col gap-[6px] mt-[15px] ${styles.readmeFadeinDiv}`}>
+                <div className={`flex flex-col gap-[6px] mt-[15px] h-[150px] ${styles.readmeFadeinDiv}`}>
                   <h2 className="text-[22px]">🗂️ Description</h2>
                   <p className="text-[14px]">{readmeData[currentIndex].description}</p>
                 </div>
@@ -215,7 +215,7 @@ export default function Home() {
 
                 <div className={styles.readmeFadeinDiv}>
                   {mounted &&
-                    <Image src={`${readmeData[currentIndex].folderStructure}-${theme == "dark" ? "dark" : "light"}.png`} className="h-[200px] my-auto object-contain w-[100%] mx-auto shadow-md" width={500} height={300} alt="" unoptimized />
+                    <Image src={`${readmeData[currentIndex].folderStructure}-${theme == "dark" ? "dark" : "light"}.png`} className=" my-auto object-contain w-[100%] mx-auto shadow-md" width={500} height={300} alt="" unoptimized />
                   }
                 </div>
               </div>
