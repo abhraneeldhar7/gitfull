@@ -165,7 +165,7 @@ export default function Home() {
                   <h1 className="text-[30px]">{readmeData[currentIndex].title}</h1>
                 </div>
                 <div className={styles.readmeFadeinDiv}>
-                  <Image src={readmeData[currentIndex].thumbnail} className="rounded-[6px] w-[100%] object-contain h-[100%] shadow-md" height={300} width={400} alt="" unoptimized />
+                  <Image src={readmeData[currentIndex].thumbnail} className="rounded-[6px] w-[100%] object-contain h-[100%] shadow-md h-[250px]" height={300} width={400} alt="" unoptimized />
                 </div>
                 <div className={`flex flex-col gap-[6px] mt-[15px] ${styles.readmeFadeinDiv}`}>
                   <h2 className="text-[22px]">🗂️ Description</h2>
