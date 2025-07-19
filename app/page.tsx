@@ -16,6 +16,9 @@ import nextjsLogo from "../public/frameworkLogos/nextjs_gyqxdo.png"
 import reactLogo from "../public/frameworkLogos/React-icon.svg.png"
 import fastApiLogo from "../public/frameworkLogos/FastAPI_prcozs.png"
 import flutterLogo from "../public/frameworkLogos/flutter.png"
+import djangoLogo from "../public/frameworkLogos/django.png"
+import expressLogo from "../public/frameworkLogos/express.png"
+
 import Link from "next/link";
 import { ArrowUpRight, Dot } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -231,21 +234,26 @@ export default function Home() {
           <div className={styles.worksWithDiv}>
             <h1 className={styles.sectionTitle}>Works with</h1>
             <div className={styles.frameworkLogoHolder}>
-
-              <div className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <div className={styles.frameworkItem}>
                 <Image src={nextjsLogo} alt="" unoptimized />
               </div>
-              <div className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <div className={styles.frameworkItem}>
                 <Image src={reactLogo} alt="" unoptimized />
               </div>
-              <div className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <div className={styles.frameworkItem}>
                 <Image className="rounded-[50%]" src={fastApiLogo} alt="" unoptimized />
               </div>
-              <div className={`${styles.frameworkItem} rounded-[5px] hover:bg-[var(--foreground)]/10`}>
+              <div className={styles.frameworkItem}>
                 <Image src={flutterLogo} alt="" unoptimized />
               </div>
-
+              <div className={styles.frameworkItem}>
+                <Image src={djangoLogo} alt="" unoptimized />
+              </div>
+              <div className={styles.frameworkItem}>
+                <Image src={expressLogo} className="rounded-[50%] bg-[white] p-[10px]" alt="" unoptimized />
+              </div>
             </div>
+            <p className="text-center text-[12px] opacity-[0.6]">and more</p>
           </div>
 
 
