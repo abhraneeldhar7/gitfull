@@ -19,27 +19,15 @@ export default function TabBar() {
     return (<div className={styles.main}>
         <div className="h-[50px] bg-[var(--background)]/10 dark:bg-[var(--background)]/40 backdrop-blur-[60px] flex items-center p-[10px] justify-between relative">
             <div>
-                {pathname.split("/")[1].length > 0 &&
-                    <Link href="/">
-                        <Image src={appLogo} height={35} width={35} alt="" unoptimized />
-                    </Link>
-                }
+                <Link href="/">
+                    <Image src={appLogo} height={35} width={35} alt="" unoptimized />
+                </Link>
             </div>
 
 
             <div className={styles.navOptionsDiv}>
                 <div className={styles.navOptions}>
-                    {/* <Button className="text-[var(--foreground)] bg-transparent text-[16px]">
-                        Examples
-                    </Button>
-
-                    <Button className="text-[var(--foreground)] bg-transparent text-[16px]">
-                        Reviews
-                    </Button>
-
-                    <Button className="text-[var(--foreground)] bg-transparent text-[16px]">
-                        Updates
-                    </Button> */}
+                  
                 </div>
             </div>
 

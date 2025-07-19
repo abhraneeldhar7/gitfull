@@ -31,7 +31,7 @@
 
 .heroTitle .textGradient {
     color: var(--foreground);
-    background-image: linear-gradient(180deg, var(--foreground) 55%, var(--background) 100%);
+    background-image: linear-gradient(180deg, var(--foreground) 65%, var(--background) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -70,7 +70,7 @@
     width: 100%;
     top: 50%;
     left: 30%;
-    transform: translateX(-100px) translateY(-320px) scale(1);
+    transform: translateX(-100px) translateY(-300px) scale(0.9);
     display: flex;
     justify-content: center;
 }
@@ -81,7 +81,7 @@
     width: 100%;
     top: 50%;
     left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-150px) scale(0.9);
     display: flex;
     justify-content: center;
 }
@@ -92,17 +92,19 @@
     width: 100%;
     top: 50%;
     left: 50%;
-    transform: translateX(-250px) translateY(100px) scale(1.1);
+    transform: translateX(-250px) translateY(80px) scale(0.9);
     display: flex;
     justify-content: center;
 }
 
 
-
+.worksWithDiv {
+    margin-top: 70px;
+}
 
 .sectionTitle {
     color: var(--foreground);
-    background-image: linear-gradient(180deg, var(--foreground) 60%, var(--background) 100%);
+    background-image: linear-gradient(180deg, var(--foreground) 70%, var(--background) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -127,7 +129,7 @@
     flex-direction: column;
     font-size: 20px;
     justify-content: center;
-    
+
     border: 1px solid #0bf7a838;
     padding: 10px 0px;
     border-radius: 10px;
@@ -162,7 +164,7 @@
     height: 350px;
     width: 500px;
     margin: auto auto;
-    
+
     border: 1px solid #0bf7a838;
     transform: translateX(-200px);
     filter: drop-shadow(0 0 12px #00ec9d7d);
@@ -182,16 +184,54 @@
     flex-wrap: wrap;
 }
 
-.frameworkItem{
+.frameworkItem {
     padding: 30px;
     transition: all 0.2s;
 }
+
 .frameworkItem img {
     height: 100px;
     width: 100px;
     object-fit: contain;
 }
 
+
+.readmeFadeinDiv {
+    animation: fadeIn 3s infinite;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(6px);
+    }
+
+    10% {
+        opacity: 0;
+        transform: scale(0.9) translateY(6px);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    80% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+
+    90% {
+        opacity: 0;
+        transform: scale(0.9) translateY(6px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.9) translateY(6px);
+    }
+}
 
 
 @media (max-width:600px) {
