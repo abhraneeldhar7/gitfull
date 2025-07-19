@@ -167,8 +167,8 @@ export default function Home() {
                 <div className={styles.readmeFadeinDiv}>
                   <h1 className="text-[30px]">{readmeData[currentIndex].title}</h1>
                 </div>
-                <div className={styles.readmeFadeinDiv}>
-                  <Image src={readmeData[currentIndex].thumbnail} className="rounded-[6px] w-[100%] object-contain h-[100%] shadow-md h-[250px]" height={300} width={400} alt="" unoptimized />
+                <div className={`${styles.readmeFadeinDiv} h-[200px] md:h-[260px] flex items-center justify-center`}>
+                  <Image src={readmeData[currentIndex].thumbnail} className="rounded-[6px] object-contain shadow-md w-[100%]" height={300} width={400} alt="" unoptimized />
                 </div>
                 <div className={`flex flex-col gap-[6px] mt-[15px] h-[150px] ${styles.readmeFadeinDiv}`}>
                   <h2 className="text-[22px]">🗂️ Description</h2>
@@ -176,7 +176,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex-2 flex flex-col gap-[20px]">
+              <div className="flex-2 flex flex-col gap-[30px]">
 
                 <div className="flex gap-[20px] flex-wrap">
                   <div className={`flex-1 min-w-[300px] h-[300px] ${styles.readmeFadeinDiv}`}>
@@ -218,7 +218,7 @@ export default function Home() {
 
                 <div className={styles.readmeFadeinDiv}>
                   {mounted &&
-                    <Image src={`${readmeData[currentIndex].folderStructure}-${theme == "dark" ? "dark" : "light"}.png`} className=" my-auto object-contain w-[100%] mx-auto shadow-md" width={500} height={300} alt="" unoptimized />
+                    <Image src={`${readmeData[currentIndex].folderStructure}-${theme == "dark" ? "dark" : "light"}.png`} className=" my-auto object-contain w-[100%] mx-auto shadow-md h-[50px] md:h-[100px] " width={500} height={300} alt="" unoptimized />
                   }
                 </div>
               </div>
