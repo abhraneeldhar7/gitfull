@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react"
 
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
-import MarkdownRender from "../markdownRender/markdownRender"
+
 
 export default function ReadmeEditor() {
     const router = useRouter();
