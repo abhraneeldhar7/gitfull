@@ -1,7 +1,7 @@
 import { creditTokensToAll } from "@/app/actions/mongodbFunctions";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
     const vercelCronHeader = req.headers.get("x-vercel-cron-secret");
     const secret = process.env.VERCEL_CRON_SECRET;
 
