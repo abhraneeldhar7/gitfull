@@ -1,7 +1,7 @@
 {
     "crons": [
       {
-        "path": "/api/creditTokens",
+        "path": "/api/credit-tokens",
         "schedule": "0 10 * * *"
       }
     ]
