@@ -1,12 +1,12 @@
 import { creditTokensToAll } from "@/app/actions/mongodbFunctions";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-    const vercelCronHeader = req.headers.get("x-vercel-cron-secret");
-    const secret = process.env.VERCEL_CRON_SECRET;
-
-    if (vercelCronHeader !== secret) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(request: Request) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return new Response('Unauthorized', {
+            status: 401,
+        });
     }
 
     try {
