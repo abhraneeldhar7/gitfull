@@ -30,7 +30,7 @@ export const options: NextAuthOptions = {
           name: user.name as string,
           email: user.email as string,
           image: user.image as string,
-          tokens: 50000
+          tokens: 100000
         }
         await createUser(newUser);
         await createUserBugspot(newUser);
