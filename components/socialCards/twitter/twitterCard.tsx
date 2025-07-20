@@ -5,13 +5,13 @@ export default function TwitterCard() {
     return (<div className={`${styles.cardMain} border border-[1px] border-[var(--foreground)]/30`}>
         <EllipsisIcon size={20} className="absolute right-[10px] top-[7px] opacity-[0.5]" />
         <div className="w-[40px]">
-            <Image src="/socialCards/MrRobot.webp" width={40} height={40} alt="" className="min-w-[40px] h-[40px] rounded-[50%]" unoptimized />
+            <Image src="/socialCards/MrRobot.png" width={40} height={40} alt="" className="min-w-[40px] object-cover h-[40px] rounded-[50%]" unoptimized />
         </div>
 
         <div className="flex flex-col gap-[5px]">
             <div className="flex items-center gap-[5px] h-[20px]">
-                <h1 className="text-[18px]">Mr Robot</h1>
-                <p className="flex items-center text-[15px] opacity-[0.6]">@mrRobot <Dot /> 2h</p>
+                <h1 className="text-[16px]">Mr Robot</h1>
+                <p className="flex items-center text-[12px] opacity-[0.6]">@mrRobot <Dot /> 2h</p>
             </div>
 
             <div className="text-[15px]">Tired of your Heroku app taking 20 seconds to wake up? I built a free tool that pings it every 15 mins so it never sleeps again.</div>
