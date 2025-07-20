@@ -83,7 +83,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
     useEffect(() => {
         if (!selectedRepo || !session) {
-            // setTokensNeeded(null);
+            setTokensNeeded(null);
             return;
         }
 
@@ -97,6 +97,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
         const gettingEstimatedTokens = async () => {
             setLoadingTree(true);
+            if (!selectedBranch) return;
             const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
             const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
             const estimate = estimateTokens(filteredTree);
@@ -115,7 +116,9 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
     const initiateMakingContent = async () => {
 
-        if (!session) return;
+        if (!session || !selectedBranch) return;
+
+
         const groqRes = await makeReadme(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name, session.user.email);
         setMakingStatus("making");
         if (groqRes) {
@@ -147,6 +150,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             }
             setMakingStatus("ready")
         }
+
+        setLoadingTree(false)
     }
 
     const [tokensNeeded, setTokensNeeded] = useState<number | null>(null)
@@ -154,28 +159,28 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     return <><div className={styles.main}>
         <div className="flex-1 flex flex-col gap-[10px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
             <h1 className="text-[30px]">Select your Repository</h1>
-            <div className="flex gap-[10px] items-center flex-wrap">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis min-w-[300px]">
-                            <Github /> abhraneeldhar <ChevronDown />
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="bg-[var(--background)] flex flex-col p-[5px] gap-[5px]">
-                        <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
-                            <Users /> Switch account
-                        </Button>
-                        <Button variant="ghost" className="justify-start text-[red]/100 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
-                            <LogOut /> Signout
-                        </Button>
-                    </PopoverContent>
-                </Popover>
 
-
-                <div className="flex-1 text-right min-w-[300px]">
-                    <p className="text-[15px]"><span className="text-[#ec4927]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens</span></p>
-                </div>
-            </div>
+            {userDetails &&
+                <div className="flex gap-[10px] items-center">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis min-w-[300px]">
+                                <Github /> {userDetails?.name} <ChevronDown />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="bg-[var(--background)] flex flex-col p-[5px] gap-[5px]">
+                            <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
+                                <Users /> Switch account
+                            </Button>
+                            <Button variant="ghost" className="justify-start text-[red]/100 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
+                                <LogOut /> Signout
+                            </Button>
+                        </PopoverContent>
+                    </Popover>
+                    <div className="flex-1 text-right min-w-[300px]">
+                        <p className="text-[15px]"><span className="text-[#ec4927]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens / day</span></p>
+                    </div>
+                </div>}
 
             {!selectedRepo &&
 
@@ -383,26 +388,31 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     <div className="mt-[20px]">
                         <p><span className="opacity-[0.7]">You have</span> {userDetails?.tokens} <span className="opacity-[0.7]">tokens</span></p>
                     </div>
-                    <div className="mt-[20px] flex flex-col gap-[10px] w-[100%] max-w-[300px] ">
-                        <Button disabled={loadingTree || (tokensNeeded > userDetails.tokens)} className="text-[white] bg-[#ec4927] hover:bg-[#FA4F2D]" onClick={() => {
-                            setLoadingTree(true);
-                            setDashboardScreen("loading");
-                            setTimeout(() => {
-                                initiateMakingContent();
-                            }, 0);
-                            setLoadingTree(false);
-                        }}>
-                            Proceed
-                        </Button>
-                        <Button variant="outline" onClick={() => {
-                            setSelectedBranch(null);
-                            setSelectedRepo(null);
-                            setTokensNeeded(null);
-                            setRepoBranches(null);
-                        }}>
-                            Cancel
-                        </Button>
-                    </div>
+
+                    {tokensNeeded > 100000 ? <div>
+                        <p className="text-[red]">One repository can not exceed 100K tokens</p>
+                    </div> :
+                        <div className="mt-[20px] flex flex-col gap-[10px] w-[100%] max-w-[300px] ">
+                            <Button disabled={loadingTree || (tokensNeeded > userDetails.tokens)} className="text-[white] bg-[#ec4927] hover:bg-[#FA4F2D]" onClick={() => {
+                                if (!session || !selectedBranch) return;
+                                setLoadingTree(true);
+                                setDashboardScreen("loading");
+                                setTimeout(() => {
+                                    initiateMakingContent();
+                                }, 0);
+                            }}>
+                                Proceed
+                            </Button>
+                            <Button variant="outline" onClick={() => {
+                                setSelectedBranch(null);
+                                setSelectedRepo(null);
+                                setTokensNeeded(null);
+                                setRepoBranches(null);
+                            }}>
+                                Cancel
+                            </Button>
+                        </div>
+                    }
 
                 </div>
 

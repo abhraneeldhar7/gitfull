@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
-import { debitTokens, getUserDetails } from "./mongodbFunctions";
+import { debitTokens, getGuestAccounts, getUserDetails } from "./mongodbFunctions";
 
 
 
@@ -358,12 +358,16 @@ export async function makeReadme(owner: string, repo: string, branch: string, em
     const tokensNeeded = estimateTokens(filteredTree)
     console.log("estimarted token: ", tokensNeeded)
     const userDetails = await getUserDetails(email);
-    if (tokensNeeded > userDetails.tokens) {
+    if (tokensNeeded > userDetails.tokens || tokensNeeded > 100000) {
         return;
     }
-    else {
+
+    const guestAccounts = await getGuestAccounts();
+
+    if (!guestAccounts.emails.includes(email)) {
         await debitTokens(email, tokensNeeded)
     }
+
 
     // Getting initial summary very high level of repo, future cotnext
     // return;

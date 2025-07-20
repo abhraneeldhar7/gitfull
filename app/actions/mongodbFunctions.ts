@@ -57,3 +57,16 @@ export async function debitTokens(email: string, tokens: number) {
         );
     });
 }
+
+export async function getGuestAccounts() {
+    return withCollection("guestAccounts", async (guestCollection) => {
+        const res = await guestCollection.findOne({ type: "guests" });
+        return JSON.parse(JSON.stringify(res));
+    });
+}
+
+export async function creditTokensToAll() {
+    return withCollection("users", async (usersCollection) => {
+        return await usersCollection.updateMany({}, { $set: { tokens: 100000 } });
+    });
+}
