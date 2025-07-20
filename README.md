@@ -1,29 +1,18 @@
-# GitFull: AI-Powered GitHub 
+# GitFull: A GitHub Repository Summarizer
+![thumbnail](./public/assets/landingPage-d6571b91-d1f2-4801-a107-64427b5aad91)
 ## 🗂️ Description
 
-GitFull is a web application designed to simplify the process of creating and managing GitHub repository READMEs. It uses AI-powered summarization to generate high-quality README content from repository code files. The application is built for developers, repository owners, and contributors who want to create engaging and informative READMEs without spending too much time.
+GitFull is a web application that generates summaries of GitHub repositories. It uses the GitHub API and natural language processing techniques to provide an overview of a repository's contents, including its files, technologies used, and key features. This project is designed for developers, researchers, and anyone interested in quickly understanding the structure and purpose of a GitHub repository.
 
-The application integrates with GitHub APIs to fetch repository data, generate summaries, and push changes back to the repository. It also features a user-friendly interface for editing and previewing README content.
+The application allows users to authenticate with GitHub, select a repository, and view a summary of its contents. The summary includes information about the repository's files, technologies used, and key features. The application also provides a README editor, which allows users to edit and preview a README file for the selected repository.
 
 ## ✨ Key Features
 
-### Core Features
-
-* **AI-Powered Summarization**: Generates high-quality README content from repository code files using Groq API
-* **GitHub Integration**: Integrates with GitHub APIs to fetch repository data, generate summaries, and push changes
-* **README Editor**: A user-friendly interface for editing and previewing README content
-
-### User Interface
-
-* **Dashboard**: Displays repository information, including owner details, repository description, language breakdown, and file analysis progress
-* **Tab Bar**: A navigation menu that allows users to switch between different screens
-* **Social Cards**: Displays repository information in a visually appealing format
-
-### Technology Integration
-
-* **NextAuth**: Handles authentication and authorization with GitHub
-* **MongoDB**: Stores repository data and user information
-* **Tailwind CSS**: A utility-first CSS framework for styling the application
+* **Repository Summarization**: Generate summaries of GitHub repositories using natural language processing techniques
+* **GitHub Authentication**: Authenticate with GitHub to access repository data
+* **README Editor**: Edit and preview README files for selected repositories
+* **Technology Stack Detection**: Detect technologies used in a repository
+* **File Tree Visualization**: Visualize the file tree of a repository
 
 ## 🗂️ Folder Structure
 
@@ -36,7 +25,7 @@ graph TD;
   app-->api;
   app-->pages;
   components-->socialCards;
-  components-->readmeEditor;
+  components-->tabBar;
   lib-->utils;
   lib-->mongodb;
 ```
@@ -46,8 +35,9 @@ graph TD;
 ![Next.js](https://img.shields.io/badge/Next.js-000?logo=next.js&logoColor=white&style=for-the-badge)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white&style=for-the-badge)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4ea94b?logo=mongodb&logoColor=white&style=for-the-badge)
-![PostCSS](https://img.shields.io/badge/PostCSS-DD27B3?logo=postcss&logoColor=white&style=for-the-badge)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwind-css&logoColor=white&style=for-the-badge)
+![GitHub API](https://img.shields.io/badge/GitHub%20API-24292F?logo=github&logoColor=white&style=for-the-badge)
+![PostCSS](https://img.shields.io/badge/PostCSS-DD27B9?logo=postcss&logoColor=white&style=for-the-badge)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white&style=for-the-badge)
 
 ## ⚙️ Setup Instructions
 
@@ -59,12 +49,28 @@ To run the project locally, follow these steps:
 
 ## GitHub Actions
 
-The repository uses GitHub Actions to automate various tasks, such as:
+The project uses GitHub Actions to automate tasks such as crediting tokens to users. The `.github/workflows/credit-tokens.yml` file defines a workflow that runs a cron job to execute the `/api/credit-tokens` endpoint.
 
-* **Build and Deploy**: Builds and deploys the application to a production environment
-* **Code Quality**: Runs code quality checks, including linting and type checking
+## Vercel Configuration
 
-Note: GitHub Actions workflows are defined in the `.github/workflows` directory.
+The project uses Vercel as its deployment platform. The `vercel.json` file defines a configuration that schedules a cron job to run the `/api/credit-tokens` endpoint.
+
+## API Endpoints
+
+The project exposes several API endpoints, including:
+
+* `/api/auth/[...nextauth]/route.ts`: NextAuth API route handler for authentication
+* `/api/credit-tokens/route.ts`: API endpoint that credits tokens to all users
+
+## 📁 File Summaries
+
+The project consists of several files and directories. Here are some key files:
+
+* `app/api/auth/[...nextauth]/route.ts`: NextAuth API route handler for authentication
+* `app/api/credit-tokens/route.ts`: API endpoint that credits tokens to all users
+* `lib/mongodbCS.ts`: MongoDB connection file that provides a function to get a database instance
+* `components/readmeEditor/readmeEditor.tsx`: README editor component that allows users to edit and preview README files
+* `lib/utils.ts`: Utility module that exports various functions for tasks such as string manipulation and date formatting
 
 
 
@@ -72,7 +78,7 @@ Note: GitHub Actions workflows are defined in the `.github/workflows` directory.
 <div align="center">
 <img src="https://avatars.githubusercontent.com/u/89008279?v=4" width="120" />
 <h3>Abhra the Neel</h3>
-<p>Full-stack developer with expertise in web, Android, and server-side development. Most projects are private due to being production code.</p>
+<p>Full-stack developer with experience in web, Android, and server development. Most projects are private due to being production code.</p>
 </div>
 <br>
 <p align="right">
