@@ -130,9 +130,9 @@ export default function Home() {
               <BugspotCard blogData={{
                 blogId: "",
                 ownerId: "107727811528334796477",
-                ownerName: "Abhraneel",
-                blogTextContent: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates magni nostrum ullam dolorum corrupti error? Repellendus veniam dignissimos quos consectetur!",
-                blogTitle: "New AI App",
+                ownerName: "Abhraneel Dhar",
+                blogTextContent: "Lorem",
+                blogTitle: "Just launched my new project",
                 likes: [],
                 bookmarks: 0,
                 analyticsNumber: 0,
@@ -142,7 +142,7 @@ export default function Home() {
                 viewStatus: "public",
                 createdAt: 0,
                 lastEditTime: 0,
-                updatedAt: 0,
+                updatedAt: 1721413423123,
               }} />
             </div>
 

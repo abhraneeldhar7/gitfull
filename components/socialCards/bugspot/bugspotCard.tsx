@@ -67,7 +67,7 @@ export default function BugspotCard({ blogData }: {
     }
     return (<div className={`${styles.main} border border-[1px] border-[var(--foreground)]/30`}>
         <div className={styles.imageHolder}>
-            <Image src={`https://res.cloudinary.com/dytynwrxu/image/upload/profilePics/${blogData.ownerId}.jpg`} width={40} height={40} alt="" unoptimized />
+            <Image src="/socialCards/batman.jpg" width={40} height={40} alt="" unoptimized />
 
         </div>
         <div className={styles.mainContent}>
