@@ -1,8 +1,12 @@
 {
-    "crons": [
-      {
-        "path": "/api/credit-tokens",
-        "schedule": "0 10 * * *"
+  "crons": [
+    {
+      "path": "/api/credit-tokens",
+      "schedule": "0 10 * * *",
+      "method": "POST",
+      "headers": {
+        "x-vercel-cron-secret": "@vercel_cron_secret"
       }
-    ]
-  }
+    }
+  ]
+}
