@@ -101,7 +101,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             const repoTree = await getRepoTree(selectedRepo.owner.login, selectedRepo.name, selectedBranch.name)
             const filteredTree = removeMediaFilesTree(filterOnlyFilesTree(removeCSSFilesTree(repoTree.tree)));
             const estimate = estimateTokens(filteredTree);
-            console.log(estimate)
+            // console.log(estimate)
             setTokensNeeded(estimate);
             setLoadingTree(false);
         }
@@ -225,7 +225,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
             {selectedRepo && <div className={styles.selectedRepoDiv}>
-                
+
 
                 <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px] pl-[10px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
                     <div className="flex flex-1 justify-between items-center gap-[10px]">
@@ -263,7 +263,14 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             {!selectedRepo &&
                 <ScrollArea className="h-[370px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[10px]">
 
+
+                    {!userRepos && <div className="flex h-[300px] items-center justify-center">
+                        <LoaderCircle size={30} className="animate-spin" />
+                    </div>}
+
                     <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px] transition-all duration-300 ease-in-out">
+
+
 
                         {userRepos && !selectedRepo && userRepos.map((repo, index) => (<div key={index} className="flex flex-col gap-[5px]">
                             {index > 0 &&
@@ -336,7 +343,6 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                             </PopoverContent>
                         </Popover>
                     </div>
-
                 </div>}
         </div>
 

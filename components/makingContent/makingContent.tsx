@@ -151,7 +151,7 @@ export default function MakingContentScreen() {
         return `https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}/raw/${currentRepoDetails.branch}/${link}`;
     }
     useEffect(() => {
-        console.log("useeffect run")
+        // console.log("useeffect run")
         if (currentRepoDetails == null) return;
 
         const getAll = async () => {
@@ -169,7 +169,7 @@ export default function MakingContentScreen() {
 
             const gettingOwnerDetails = async () => {
                 const res = await getGithubProfile(currentRepoDetails.owner);
-                console.log("owner details: ", res)
+                // console.log("owner details: ", res)
                 setOwnerDetails(res);
             }
             gettingOwnerDetails();
@@ -177,7 +177,7 @@ export default function MakingContentScreen() {
             const gettingRepoDetails = async () => {
                 const res = await getRepoDetails(`https://github.com/${currentRepoDetails.owner}/${currentRepoDetails.repo}`);
                 setextraRepoDetails(res);
-                console.log("repo details: ", res);
+                // console.log("repo details: ", res);
 
 
 
@@ -201,21 +201,21 @@ export default function MakingContentScreen() {
 
         const gettingThumbnailFromReadme = async (repoDetails: any) => {
             const existingReadme = await getReadme(currentRepoDetails.owner, currentRepoDetails.repo, session.user.accessToken);
-            console.log("readmetext: ", existingReadme)
+            // console.log("readmetext: ", existingReadme)
 
             if (repoDetails.homepage?.length) {
                 const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(repoDetails.homepage)}&screenshot=true`;
-                console.log("getting thummbnail from livelink")
+                // console.log("getting thummbnail from livelink")
                 const imgRes = await fetch(imageUrl);
                 const imgData = await imgRes.json();
                 const screenshotUrl = imgData?.data?.screenshot?.url;
                 setThumbnailUrl(screenshotUrl);
             }
             else {
-                console.log("getting thumbnail from readme")
+                // console.log("getting thumbnail from readme")
 
                 let thumbnailUrl = extractThumbnailImage(existingReadme as string);
-                console.log("found in readme: ", thumbnailUrl)
+                // console.log("found in readme: ", thumbnailUrl)
                 if (thumbnailUrl) {
                     setThumbnailUrl(sanitizeLink(thumbnailUrl));
                 }
@@ -224,7 +224,7 @@ export default function MakingContentScreen() {
                 }
             }
         }
-        console.log("starting readmethang")
+        // console.log("starting readmethang")
         gettingThumbnailFromReadme(extraRepoDetails)
 
     }, [extraRepoDetails, currentRepoDetails, session])

@@ -24,7 +24,7 @@ export const options: NextAuthOptions = {
     async signIn({ user }) {
       const existingUser = await getUserDetails(user.email);
       if (!existingUser) {
-        console.log("making user")
+        // console.log("making user")
         const newUser: userType = {
           id: user.id as string,
           name: user.name as string,

@@ -47,7 +47,7 @@ async function askGroq(prompt: string): Promise<any | null> {
 
     while (attempts < maxAttempts) {
         try {
-            console.log(`🔁 [Groq] Sending request (attempt ${attempts + 1}/${maxAttempts})...`);
+            // console.log(`🔁 [Groq] Sending request (attempt ${attempts + 1}/${maxAttempts})...`);
 
             const res = await fetch(API_URL, {
                 method: "POST",
@@ -58,7 +58,7 @@ async function askGroq(prompt: string): Promise<any | null> {
             // Handle rate limiting
             if (res.status === 429) {
                 const retryAfter = res.headers.get("retry-after") || "60";
-                console.log(res)
+                // console.log(res)
                 const waitTime = (parseFloat(retryAfter) * 1000);
                 console.warn(`⏳ Rate limited. Retrying in ${retryAfter} seconds...`);
                 await new Promise((r) => setTimeout(r, waitTime));
@@ -67,15 +67,15 @@ async function askGroq(prompt: string): Promise<any | null> {
             }
 
             const json = await res.json();
-            console.log("grok response: ", json)
+            // console.log("grok response: ", json)
             const content = json.choices?.[0]?.message?.content;
-            console.log(content)
+            // console.log(content)
             if (!content) {
                 console.warn("⚠️ No content in Groq response.");
                 return null;
             }
 
-            console.log("✅ [Groq] Response received.");
+            // console.log("✅ [Groq] Response received.");
             // return parseGroqResponse(content);
             return content
         } catch (error) {
@@ -220,10 +220,10 @@ Here are the file contents
 ${prompt}`;
 
         try {
-            console.log("summarizing chunk ", chunkNumber)
+            // console.log("summarizing chunk ", chunkNumber)
             const summary = await askGroq(fullPrompt);
 
-            console.log("Summarized chunk ", chunkNumber++)
+            // console.log("Summarized chunk ", chunkNumber++)
 
             results = results + summary + "\n\n";
         } catch (err) {
@@ -356,7 +356,7 @@ export async function makeReadme(owner: string, repo: string, branch: string, em
 
 
     const tokensNeeded = estimateTokens(filteredTree)
-    console.log("estimarted token: ", tokensNeeded)
+    // console.log("estimarted token: ", tokensNeeded)
     const userDetails = await getUserDetails(email);
     if (tokensNeeded > userDetails.tokens || tokensNeeded > 100000) {
         return;

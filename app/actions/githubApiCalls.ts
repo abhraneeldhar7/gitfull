@@ -42,7 +42,7 @@ export async function getBranches(owner: string, repo: string) {
 export async function getRepoTree(owner: string, repo: string, branch: string) {
     const session = await getServerSession(options);
     if (!session) return;
-    console.log("fetching: ", `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`)
+    // console.log("fetching: ", `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`)
     const tree = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
         {
@@ -87,7 +87,7 @@ export async function uploadLandingPageScreenshot({
 
     const imageUrl = `https://api.microlink.io/?url=${encodeURIComponent(data.homepage)}&screenshot=true`;
 
-    console.log(imageUrl);
+    // console.log(imageUrl);
 
     // Step 1: Get the screenshot URL from Microlink
     const imgRes = await fetch(imageUrl);
@@ -203,7 +203,7 @@ export async function pushReadmetoRepo({ owner, repo, branch, readmeText }: { ow
         const error = await update.json();
         console.error("Failed to update README:", error);
     } else {
-        console.log("✅ README.md updated successfully!");
+        // console.log("✅ README.md updated successfully!");
     }
 }
 

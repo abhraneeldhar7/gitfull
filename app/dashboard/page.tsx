@@ -18,7 +18,7 @@ export default function Dashboard() {
     const { data: session } = useSession();
     const currentRepoDetails = useStore((state) => state.currentRepoDetails);
     useEffect(() => {
-        console.log("currentrepo from dashbaord: ", currentRepoDetails)
+        // console.log("currentrepo from dashbaord: ", currentRepoDetails)
     }, [currentRepoDetails])
     return (<>
         <div className={styles.main}>
