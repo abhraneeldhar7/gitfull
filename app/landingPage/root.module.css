@@ -103,7 +103,7 @@
 
 .exampleHolder {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300, 1fr));
     row-gap: 20px;
     column-gap: 20px;
     margin-top: 20px;
