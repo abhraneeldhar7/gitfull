@@ -55,6 +55,9 @@
 }
 
 @media (max-width:500px) {
+    .main{
+        margin: 0px auto;
+    }
     .socialImgHolder {
         min-width: 150px;
         height: 150px;

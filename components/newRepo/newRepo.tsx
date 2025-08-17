@@ -157,34 +157,37 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     const [tokensNeeded, setTokensNeeded] = useState<number | null>(null)
 
     return <><div className={styles.main}>
-        <div className="flex-1 flex flex-col gap-[10px] flex-1 p-5 rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] min-w-[350px] h-[fit-content]">
-            <h1 className="text-[30px]">Select your Repository</h1>
+        <div className="flex-1 flex flex-col gap-[10px] flex-1 p-[6px] md:p-[20px] rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] max-w-[600px] mx-auto">
+            <h1 className="text-[30px] px-[10px] md:px-[0px]">Select your Repository</h1>
 
             {userDetails &&
                 <div className="flex gap-[10px] items-center">
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-start flex-1 px-[20px] text-ellipsis min-w-[300px]">
-                                <Github /> {userDetails?.name} <ChevronDown />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="bg-[var(--background)] flex flex-col p-[5px] gap-[5px]">
-                            <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
-                                <Users /> Switch account
-                            </Button>
-                            <Button variant="ghost" className="justify-start text-[red]/100 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
-                                <LogOut /> Signout
-                            </Button>
-                        </PopoverContent>
-                    </Popover>
-                    <div className="flex-1 text-right min-w-[300px]">
+                    <div className="flex-1">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button className="bg-[var(--background)] border border-[1px] border-[var(--secondary)] text-[17px] h-[45px] text-[var(--foreground)] flex items-center hover:bg-[var(--bgCol)] justify-between w-[100%] px-[20px] ">
+                                    <div className="items-center flex gap-[10px] text-ellipsis overflow-hidden">
+                                        <Github /> {userDetails?.name}
+                                    </div>
+                                    <ChevronDown />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="bg-[var(--background)] flex flex-col p-[5px] gap-[5px]">
+                                <Button variant="ghost" className="justify-start text-[var(--foreground)]/80 font-[400] outline-none" onClick={() => { signOut({ callbackUrl: "/login" }) }}>
+                                    <Users /> Switch account
+                                </Button>
+                                <Button variant="ghost" className="justify-start text-[red]/100 hover:text-[red] outline-none" onClick={() => { signOut({ callbackUrl: "/" }) }}>
+                                    <LogOut /> Signout
+                                </Button>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="text-right w-[fit-content]">
                         <p className="text-[15px]"><span className="text-[#ec4927]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens / day</span></p>
                     </div>
                 </div>}
 
             {!selectedRepo &&
-
-
                 <div className="flex gap-[10px] items-center">
                     <Input spellCheck={false} className="rounded-[6px]" placeholder="Or paste public url" disabled={checkingUrlLoader} ref={urlInputRef} />
 
@@ -222,18 +225,28 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
 
             {selectedRepo && <div className={styles.selectedRepoDiv}>
-                <div className="flex items-center gap-[10px] justify-between text-[16px] h-[45px] px-[15px] pr-[5px] rounded-[7px] transition-all duration-200 border-[0px] border-[var(--foreground)]/20" >
-                    <div className="flex items-center gap-[10px]">
-                        <GithubIcon size={16} className="h-[16px] w-[16px]" />
-                        <p className="overflow-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{selectedRepo.name}</p>
+                
 
-                        {selectedRepo.visibility == "private" &&
-                            <Lock size={16} className="opacity-[0.4]" />
-                        }
+                <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px] pl-[10px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
+                    <div className="flex flex-1 justify-between items-center gap-[10px]">
+                        <div className="flex flex-1 items-center gap-[10px]">
+                            <div className="min-w-[16px]">
+                                <GithubIcon className="h-[16px] w-[16px]" />
+                            </div>
+                            <div className="w-[100%] h-[1.5em] overflow-hidden relative">
+                                <div className="absolute w-[100%] text-ellipsis whitespace-nowrap">{selectedRepo.name}</div>
+                            </div>
+                        </div>
 
-                        <p className="text-[12px] opacity-[0.4]">
-                            {timeAgo(selectedRepo.updated_at)}
-                        </p>
+                        <div className="flex gap-[10px items-center] gap-[5px]">
+                            {selectedRepo.visibility == "private" &&
+                                <Lock size={16} className="opacity-[0.4]" />
+                            }
+
+                            <p className="text-[12px] opacity-[0.4] whitespace-nowrap inline-block">
+                                {timeAgo(selectedRepo.updated_at)}
+                            </p>
+                        </div>
                     </div>
                     <Button onClick={() => {
                         setSelectedRepo(null);
@@ -242,6 +255,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     }} className="h-[35px] w-[100px]">
                         Cancel
                     </Button>
+
                 </div>
             </div>}
 
@@ -249,29 +263,33 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             {!selectedRepo &&
                 <ScrollArea className="h-[370px] rounded-[10px] border-[1px] border-[var(--foreground)]/20 p-[10px]">
 
-                    <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px]  transition-all duration-300 ease-in-out">
+                    <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px] transition-all duration-300 ease-in-out">
 
                         {userRepos && !selectedRepo && userRepos.map((repo, index) => (<div key={index}>
                             {index > 0 &&
                                 <div className="w-[100%] h-[1px] bg-[linear-gradient(to_right,transparent,var(--secondary),transparent)]"></div>
                             }
 
-                            <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px]  pl-[10px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
-                                <div className="flex items-center gap-[10px]">
-                                    <div className="min-w-[16px]">
-                                        <GithubIcon className="h-[16px] w-[16px]" />
+                            <div className={`flex items-center gap-[10px] justify-between text-[16px] h-[45px] pl-[10px] hover:bg-[var(--bgCol2)] rounded-[7px] transition-all duration-200 ${styles.repoItemDiv}`}>
+                                <div className="flex flex-1 justify-between items-center gap-[10px]">
+                                    <div className="flex flex-1 items-center gap-[10px]">
+                                        <div className="min-w-[16px]">
+                                            <GithubIcon className="h-[16px] w-[16px]" />
+                                        </div>
+                                        <div className="w-[100%] h-[1.5em] overflow-hidden relative">
+                                            <div className="absolute w-[100%] text-ellipsis whitespace-nowrap">{repo.name}</div>
+                                        </div>
                                     </div>
-                                    <p className="overflow-x-hidden max-w-[300px] text-ellipsis whitespace-nowrap inline-block">{repo.name}</p>
 
+                                    <div className="flex gap-[10px items-center] gap-[5px]">
+                                        {repo.visibility == "private" &&
+                                            <Lock size={16} className="opacity-[0.4]" />
+                                        }
 
-                                    {repo.visibility == "private" &&
-                                        <Lock size={16} className="opacity-[0.4]" />
-                                    }
-
-
-                                    <p className="text-[12px] opacity-[0.4]">
-                                        {timeAgo(repo.updated_at)}
-                                    </p>
+                                        <p className="text-[12px] opacity-[0.4] whitespace-nowrap inline-block">
+                                            {timeAgo(repo.updated_at)}
+                                        </p>
+                                    </div>
                                 </div>
                                 <Button onClick={async () => {
                                     setSelectedRepo(repo);
@@ -287,13 +305,13 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 </ScrollArea>}
 
             {selectedRepo &&
-                <div className="w-[250px] flex flex-col gap-[10px]">
-                    <div className="flex justify-between gap-[10px] items-center">
+                <div className="w-[100%] mt-[10px] px-[10px] md:mt-[auto] my-[auto] flex flex-col gap-[10px]">
+                    <div className="flex justify-between gap-[20px] items-center">
                         <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Auto push when done</h1>
                         <Switch checked={autoUpdateReadme && session?.user.login == selectedRepo.owner.login} onCheckedChange={setAutoUpdateReadme} disabled={session?.user.login != selectedRepo.owner.login} />
                     </div>
 
-                    <div className="flex gap-[20px] items-center">
+                    <div className="flex gap-[20px] justify-between items-center">
                         <h1 className="text-[16px] flex items-center gap-[15px]">
                             <GitBranch size={14} />
                             Branch</h1>
@@ -320,12 +338,11 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     </div>
 
                 </div>}
-
         </div>
 
 
 
-        {!tokensNeeded && <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2 mt-[10px]">
+        {false && <div className="flex-1 min-w-[300px] flex flex-col gap-[20px] p-2 mt-[10px]">
             <h1 className="text-[30px]">
                 Choose Platform
             </h1>
@@ -334,9 +351,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     toggleCard(1);
                 }}>
                     <Image src={githubBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
-                    {/* {socialCard.includes(1) &&
-                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    } */}
+
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(2) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(2) && "opacity-[0.4]"}`} onClick={() => {
@@ -344,9 +359,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                     toggleCard(2);
                 }}>
                     <Image src={xBanner} alt="" className="rounded-[10px] object-cover h-[100%] w-[100%]" unoptimized />
-                    {/* {socialCard.includes(2) &&
-                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    } */}
+
 
                 </div>
 
@@ -356,9 +369,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 }}>
                     <Image src={artisticBg} className="absolute z-[-1] top-0 left-0 h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
                     <Image src={bugspotBanner} className="absolute z-[1] h-[30px] w-[100%] object-contain " alt="" unoptimized />
-                    {/* {socialCard.includes(3) &&
-                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px] z-[2]" size={22} />
-                    } */}
+
                 </div>
 
                 <div className={`${styles.socialImgHolder} ${socialCard.includes(4) && "opacity-[1]"} ${socialCard.length && !socialCard.includes(4) && "opacity-[0.4]"}`} onClick={() => {
@@ -367,9 +378,6 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 }}>
                     <Image src={linkedInBanner} className="h-[100%] w-[100%] object-cover rounded-[10px]" alt="" unoptimized />
 
-                    {/* {socialCard.includes(4) &&
-                        <CheckSquare color="white" className="absolute left-[10px] bottom-[10px]" size={22} />
-                    } */}
                 </div>
             </div>
             <p className="text-center text-[15px] opacity-[0.5]">Social posts comming soon</p>

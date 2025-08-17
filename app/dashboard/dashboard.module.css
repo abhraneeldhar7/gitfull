@@ -1,7 +1,7 @@
-.main{
+.main {
     min-height: 100vh;
     padding: 20px;
-    padding-top: 70px;
+    /* padding-top: 70px; */
     display: flex;
     /* justify-content: center; */
     flex-direction: column;
@@ -11,8 +11,8 @@
 
 
 @media (max-width:500px) {
-    .main{
-        padding: 10px;
+    .main {
+        padding: 5px;
         padding-top: 60px;
     }
 }

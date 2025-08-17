@@ -37,7 +37,7 @@ export default function RootLayout({
                 theme="dark"
                 transition={Bounce}
             />
-            <TabBar />
+            {/* <TabBar /> */}
             {children}
             <div suppressHydrationWarning>
             <Footer />
