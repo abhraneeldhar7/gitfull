@@ -157,7 +157,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
     const [tokensNeeded, setTokensNeeded] = useState<number | null>(null)
 
     return <><div className={styles.main}>
-        <div className="flex-1 flex flex-col gap-[10px] flex-1 p-[12px] md:p-[20px] rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] max-w-[600px] mx-auto">
+        <div className="flex-1 flex flex-col gap-[10px] flex-1 p-[6px] md:p-[20px] rounded-[10px] border-[1px] border-[var(--foreground)]/10 bg-[var(--bgCol)] max-w-[600px] mx-auto">
             <h1 className="text-[30px] px-[10px] md:px-[0px]">Select your Repository</h1>
 
             {userDetails &&
