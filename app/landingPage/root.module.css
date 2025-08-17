@@ -30,10 +30,10 @@
 }
 
 .heroBtn {
-    font-size: 30px;
+    font-size: 25px;
     height: unset;
-    border-radius: 40px;
-    padding: 15px 30px;
+    border-radius: 10px;
+    padding: 10px 20px;
     width: fit-content;
     margin: 0px auto;
     margin-top: 30px;
