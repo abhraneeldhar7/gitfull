@@ -10,6 +10,7 @@ import { getGithubProfile } from "../actions/githubApiCalls";
 import { getUserDescription } from "../actions/groqFuncitons";
 import { ToastContainer, Bounce } from 'react-toastify';
 import { useSession } from "next-auth/react";
+import TabBar from "@/components/tabBar/tabBar"
 
 export default function Dashboard() {
     const [repoTree, setRepoTree] = useState<any[] | null>(null);
@@ -21,6 +22,7 @@ export default function Dashboard() {
         // console.log("currentrepo from dashbaord: ", currentRepoDetails)
     }, [currentRepoDetails])
     return (<>
+        <TabBar />
         <div className={styles.main}>
             {dashboardScreen == "newReadme" &&
                 <NewRepo setRepoTree={setRepoTree} />
@@ -29,7 +31,7 @@ export default function Dashboard() {
             {dashboardScreen == "loading" &&
                 <MakingContentScreen />
             }
-            
+
             {dashboardScreen == "editor" &&
                 <ReadmeEditor />
             }
