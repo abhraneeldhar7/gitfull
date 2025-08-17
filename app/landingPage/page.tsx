@@ -4,7 +4,7 @@ import styles from "./root.module.css"
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Sparkle, Sparkles } from 'lucide-react'
+import { GitBranch, MousePointer2, PartyPopper, Sparkle, Sparkles } from 'lucide-react'
 import ReactPlayer from 'react-player'
 
 export default function Landingpage() {
@@ -41,11 +41,14 @@ export default function Landingpage() {
         }
 
 
+        <div className="bg-gradient-to-t from-[var(--background)] to-[transparent] absolute z-[2] bottom-0 left-0 w-[100%] h-[200px]"></div>
       </div>
 
 
 
-      <div className='border-[1px] border-y-[var(--foreground)]/30 mt-[40px] flex flex-col-reverse md:flex-row'>
+
+
+      <div className='border-[1px] md:border-x-[0px] border-[var(--foreground)]/30 mt-[40px] flex flex-col-reverse md:flex-row'>
 
         <div className='hidden md:flex w-[50px] border-r-[1px] border-r-[var(--foreground)]/30'>
           <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] w-[100%] object-cover invert dark:invert-0' alt='' unoptimized />
@@ -53,16 +56,20 @@ export default function Landingpage() {
 
         <div className='flex-1 flex flex-col h-[100%]'>
 
-          <div className="text-[16px] p-[10px] border-b-[1px] border-b-[var(--foreground)]/30"> How_to_use.jsx</div>
+          <div className="text-[16px] p-[10px] px-[20px] border-b-[1px] border-[var(--foreground)]/30 border-t-[2px] md:border-t-[0px]"> How_to_use.mp4</div>
           <div className='p-[10px] px-[14px] relative'>
 
             <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] md:hidden w-[100%] object-cover invert dark:invert-0 absolute top-0 bottom-0 left-0 right-0 opacity-[0.5] z-[-1]' alt='' unoptimized />
 
-            aa
+            <div className='text-[20px] flex flex-col gap-[10px]'>
+              <p className='flex gap-[10px] items-center'><MousePointer2 size={18} color='#f9411c' /> Select your repository</p>
+              <p className='flex gap-[10px] items-center'><GitBranch size={18} color='#f9411c' /> Configure branch</p>
+              <p className='flex gap-[10px] items-center'><PartyPopper size={18} color='#f9411c' /> Click <span className='text-[#f9411c]'>proceed</span></p>
+            </div>
           </div>
         </div>
 
-        <div className=''>
+        <div className='border-l-[1px] border-l-[var(--foreground)]/30'>
           {mounted &&
             <div className='h-[100%] md:h-[400px] w-[100%] object-contain'>
               <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop />
@@ -70,7 +77,7 @@ export default function Landingpage() {
           }
         </div>
 
-        <div className='hidden md:flex w-[50px]'>
+        <div className='hidden md:flex w-[50px] border-l-[1px] border-l-[var(--foreground)]/30'>
           <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] w-[100%] object-cover invert dark:invert-0' alt='' unoptimized />
         </div>
 
