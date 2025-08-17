@@ -160,17 +160,16 @@ export default function Landingpage() {
 
           {exampleRepos.map((repo, index) => (
 
-            <div className='' key={index}>
-              <Link href={repo.link} target='_blank'>
-                <div className='w-[100%] max-w-[400px] flex flex-col gap-[12px]'>
-                  <Image src={repo.thumbnail} height={100} width={200} alt='' className="h-[200px] w-[100%] rounded-[12px] borde-[1px] border-[var(--foreground)]/30 object-cover transition-all duration-200 hover:translate-y-[-10px]" unoptimized />
-                  <div className='flex flex-col gap-[0px] pl-[10px]'>
-                    <h1 className='text-[22px] leading-[1.2em]'>{repo.repoName}</h1>
-                    <p className='text-[17px] opacity-[0.7]'>{repo.owner}</p>
-                  </div>
+
+            <Link className='w-[fit-content]' href={repo.link} target='_blank' key={index}>
+              <div className='w-[100%] max-w-[400px] flex flex-col gap-[12px]'>
+                <Image src={repo.thumbnail} height={100} width={200} alt='' className="h-[200px] w-[100%] rounded-[12px] borde-[1px] border-[var(--foreground)]/30 object-cover transition-all duration-200 hover:translate-y-[-10px]" unoptimized />
+                <div className='flex flex-col gap-[0px] pl-[10px]'>
+                  <h1 className='text-[22px] leading-[1.2em]'>{repo.repoName}</h1>
+                  <p className='text-[17px] opacity-[0.7]'>{repo.owner}</p>
                 </div>
-              </Link>
-            </div>
+              </div>
+            </Link>
           ))}
 
 
