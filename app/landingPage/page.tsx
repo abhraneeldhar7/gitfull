@@ -75,7 +75,7 @@ export default function Landingpage() {
         }
 
 
-        <div className="bg-gradient-to-t from-[var(--background)] to-[transparent] absolute z-[2] bottom-0 left-0 w-[100%] h-[200px]"></div>
+        <div className="bg-gradient-to-t from-[var(--background)] to-[transparent] absolute z-[2] bottom-0 left-0 w-[100%] h-[60px] md:h-[200px]"></div>
       </div>
 
 
