@@ -27,7 +27,7 @@
     "lucide-react": "^0.525.0",
     "mermaid": "^11.9.0",
     "mongodb": "^6.17.0",
-    "motion": "^12.23.6",
+    "motion": "^12.23.12",
     "next": "15.3.5",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.6",
