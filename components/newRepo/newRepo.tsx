@@ -305,7 +305,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                 </ScrollArea>}
 
             {selectedRepo &&
-                <div className="w-[100%] mt-[10px] px-[10px] md:mt-[auto] my-[auto] flex flex-col gap-[10px]">
+                <div className="w-[100%] mt-[10px] px-[10px] md:mt-[auto] my-[auto] flex flex-col gap-[10px] pb-[10px] md:pb-[0px]">
                     <div className="flex justify-between gap-[20px] items-center">
                         <h1 className="text-[16px] flex items-center gap-[15px]"><FileCheck2 size={14} /> Auto push when done</h1>
                         <Switch checked={autoUpdateReadme && session?.user.login == selectedRepo.owner.login} onCheckedChange={setAutoUpdateReadme} disabled={session?.user.login != selectedRepo.owner.login} />
