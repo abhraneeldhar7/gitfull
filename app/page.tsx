@@ -23,6 +23,7 @@ import Link from "next/link";
 import { ArrowUpRight, Dot } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import Landingpage from "./landingPage/page";
 
 export default function Home() {
   const router = useRouter();
@@ -101,8 +102,10 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  return (
-    <>
+  const newPage = true;
+
+  if (!newPage) {
+    return (
       <div className={styles.main}>
         {/* <BackgroundBeams className="z-[-1] absolute h-[100%] w-[100%]" /> */}
         <Image src={gradientBg} className="top-0 left-0 absolute w-[100%] h-[100%] z-[-2] opacity-[0.1] invert dark:opacity-[0.2] dark:filter-none object-cover" alt="" />
@@ -260,6 +263,10 @@ export default function Home() {
         </div>
 
       </div >
-    </>
-  )
+
+    )
+  }
+  else {
+    return (<Landingpage />)
+  }
 }
