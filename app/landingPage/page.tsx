@@ -20,12 +20,6 @@ export default function Landingpage() {
 
   const exampleRepos = [
     {
-      repoName: "Gitfull",
-      owner: "abhraneeldhar7",
-      thumbnail: "https://gitfull.vercel.app/opengraph-image.png",
-      link: "https://github.com/abhraneeldhar7/gitfull"
-    },
-    {
       repoName: "Lazyping",
       owner: "abhraneeldhar7",
       thumbnail: "https://lazyping.vercel.app/opengraph-image.png",
@@ -38,16 +32,16 @@ export default function Landingpage() {
       link: "https://github.com/Xeven777/blastro"
     },
     {
-      repoName: "Portfolio site",
-      owner: "abhraneeldhar7",
-      thumbnail: "https://abhraneeldhar.vercel.app/opengraph-image.png",
-      link: "https://github.com/abhraneeldhar7/portfolio"
+      repoName: "Go Interpreter",
+      owner: "jerkeyray",
+      thumbnail: "/landingPage/examples/goInterpreter.webp",
+      link: "https://github.com/jerkeyray/go-interpreter"
     },
     {
-      repoName: "SoloDev",
-      owner: "abhraneeldhar7",
-      thumbnail: "https://solo-dev.vercel.app/opengraph-image.png",
-      link: "https://github.com/abhraneeldhar7/solo-dev"
+      repoName: "Quill.ai",
+      owner: "Srilochan7",
+      thumbnail: "/landingPage/examples/chatpdf.png",
+      link: "https://github.com/Srilochan7/Quill.ai/tree/main"
     }
   ]
 
