@@ -27,7 +27,7 @@ export default function Landingpage() {
 
         </div>
 
-        <Image src="/landingPage/heroGif.gif" height={200} width={300} alt='' unoptimized className={styles.heroGifImg} />
+        <Image src="/landingPage/heroGif.gif" height={200} width={300} alt='' className={styles.heroGifImg} />
 
 
       </div>
@@ -52,7 +52,7 @@ export default function Landingpage() {
         </div>
 
         <div className='border-l-[1px] border-l-[var(--foreground)]/30'>
-          <Image src="/landingPage/howtouse.gif" height={300} width={400} className='h-[100%] md:h-[400px] w-[100%] object-contain' alt="" unoptimized />
+          <Image src="/landingPage/howtouse.gif" height={300} width={400} className='h-[100%] md:h-[400px] w-[100%] object-contain' alt=""/>
         </div>
 
         <div className='hidden md:flex w-[50px] border-l-[1px] border-l-[var(--foreground)]/30'>
