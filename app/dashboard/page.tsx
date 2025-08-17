@@ -22,7 +22,9 @@ export default function Dashboard() {
         // console.log("currentrepo from dashbaord: ", currentRepoDetails)
     }, [currentRepoDetails])
     return (<>
-        <TabBar />
+        {dashboardScreen != "newReadme" &&
+            <TabBar />
+        }
         <div className={styles.main}>
             {dashboardScreen == "newReadme" &&
                 <NewRepo setRepoTree={setRepoTree} />

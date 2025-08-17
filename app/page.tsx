@@ -104,7 +104,7 @@ export default function Home() {
   return (
     <>
       <div className={styles.main}>
-        <BackgroundBeams className="z-[-1] absolute h-[100%] w-[100%]" />
+        {/* <BackgroundBeams className="z-[-1] absolute h-[100%] w-[100%]" /> */}
         <Image src={gradientBg} className="top-0 left-0 absolute w-[100%] h-[100%] z-[-2] opacity-[0.1] invert dark:opacity-[0.2] dark:filter-none object-cover" alt="" />
         <div className={styles.heroDiv}>
           <div className="flex-1 flex flex-col gap-[20px]">
@@ -163,7 +163,7 @@ export default function Home() {
 
 
             <div className="flex gap-[20px] flex-wrap mt-[20px]">
-              <div className="flex-1 flex flex-col gap-[10px] min-w-[300px]">
+              <div className="flex-1 flex flex-col gap-[20px] min-w-[300px]">
                 <div className={styles.readmeFadeinDiv}>
                   <h1 className="text-[30px]">{readmeData[currentIndex].title}</h1>
                 </div>
