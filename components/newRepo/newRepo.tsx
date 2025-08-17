@@ -265,7 +265,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
 
                     <div className="bg-[var(--background)] rounded-[10px] flex flex-col gap-[5px] transition-all duration-300 ease-in-out">
 
-                        {userRepos && !selectedRepo && userRepos.map((repo, index) => (<div key={index}>
+                        {userRepos && !selectedRepo && userRepos.map((repo, index) => (<div key={index} className="flex flex-col gap-[5px]">
                             {index > 0 &&
                                 <div className="w-[100%] h-[1px] bg-[linear-gradient(to_right,transparent,var(--secondary),transparent)]"></div>
                             }
