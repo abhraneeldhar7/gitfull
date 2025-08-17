@@ -1,12 +1,19 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useRef, useState } from 'react'
 import styles from "./root.module.css"
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Sparkle, Sparkles } from 'lucide-react'
-
+import ReactPlayer from 'react-player'
 
 export default function Landingpage() {
+  const vidRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true)
+    vidRef?.current?.click();
+  }, [])
   return (
     <div className={styles.main}>
 
@@ -27,7 +34,11 @@ export default function Landingpage() {
 
         </div>
 
-        <Image src="/landingPage/heroGif.gif" height={200} width={300} alt='' unoptimized className={styles.heroGifImg} />
+        {mounted &&
+          <div ref={vidRef} className={styles.heroGifDiv}>
+            <ReactPlayer height="100%" width="100%" src="/landingPage/heroVid.mp4" playing={true} muted loop />
+          </div>
+        }
 
 
       </div>
@@ -44,18 +55,22 @@ export default function Landingpage() {
 
           <div className="text-[16px] p-[10px] border-b-[1px] border-b-[var(--foreground)]/30"> How_to_use.jsx</div>
           <div className='p-[10px] px-[14px] relative'>
-            <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] md:hidden w-[100%] object-cover invert dark:invert-0 absolute top-0 bottom-0 left-0 right-0 opacity-[0.5] z-[-1]' alt='' unoptimized />
 
+            <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] md:hidden w-[100%] object-cover invert dark:invert-0 absolute top-0 bottom-0 left-0 right-0 opacity-[0.5] z-[-1]' alt='' unoptimized />
 
             aa
           </div>
         </div>
 
-        <div className='border-l-[1px] border-l-[var(--foreground)]/30'>
-          <Image src="/landingPage/howtouse.gif" height={300} width={400} className='h-[100%] md:h-[400px] w-[100%] object-contain' alt="" unoptimized />
+        <div className=''>
+          {mounted &&
+            <div className='h-[100%] md:h-[400px] w-[100%] object-contain'>
+              <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop />
+            </div>
+          }
         </div>
 
-        <div className='hidden md:flex w-[50px] border-l-[1px] border-l-[var(--foreground)]/30'>
+        <div className='hidden md:flex w-[50px]'>
           <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] w-[100%] object-cover invert dark:invert-0' alt='' unoptimized />
         </div>
 
