@@ -161,7 +161,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
             <h1 className="text-[30px] px-[10px] md:px-[0px]">Select your Repository</h1>
 
             {userDetails &&
-                <div className="flex gap-[10px] items-center">
+                <div className="flex gap-[2px] items-center">
                     <div className="flex-1">
                         <Popover>
                             <PopoverTrigger asChild>
@@ -183,7 +183,7 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         </Popover>
                     </div>
                     <div className="text-right w-[fit-content]">
-                        <p className="text-[15px]"><span className="text-[#ec4927] font-[500]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens / day</span></p>
+                        <p className="text-[15px] px-[10px]"><span className="text-[#ec4927] font-[500]">{userDetails?.tokens}</span> <span className="opacity-[0.7] text-[12px]">tokens / day</span></p>
                     </div>
                 </div>}
 
