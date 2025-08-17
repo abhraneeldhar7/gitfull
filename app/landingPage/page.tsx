@@ -104,7 +104,7 @@ export default function Landingpage() {
             Readmes made
           </p>
         </div>
-a
+
 
       </div>
 
@@ -160,7 +160,7 @@ a
 
           {exampleRepos.map((repo, index) => (
 
-            <div className='flex justify-center' key={index}>
+            <div className='' key={index}>
               <Link href={repo.link} target='_blank'>
                 <div className='w-[100%] max-w-[400px] flex flex-col gap-[12px]'>
                   <Image src={repo.thumbnail} height={100} width={200} alt='' className="h-[200px] w-[100%] rounded-[12px] borde-[1px] border-[var(--foreground)]/30 object-cover transition-all duration-200 hover:translate-y-[-10px]" unoptimized />
