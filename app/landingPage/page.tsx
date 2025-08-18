@@ -70,7 +70,7 @@ export default function Landingpage() {
           <div className='h-[50vh]'></div>}
         {mounted &&
           <div ref={vidRef} className={styles.heroGifDiv}>
-            <ReactPlayer height="100%" width="100%" src="/landingPage/heroVid.mp4" playing={true} muted loop />
+            <ReactPlayer height="100%" width="100%" src="/landingPage/heroVid.mp4" playing={true} muted loop controls={false} />
           </div>
         }
 
@@ -131,7 +131,7 @@ export default function Landingpage() {
         <div className='border-l-[1px] border-l-[var(--foreground)]/30'>
           {mounted &&
             <div className='h-[100%] md:h-[400px] w-[100%] object-contain'>
-              <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop />
+              <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop controls={false}/>
             </div>
           }
         </div>
