@@ -20,16 +20,22 @@ export default function Landingpage() {
 
   const exampleRepos = [
     {
+      repoName: "Blastro",
+      owner: "Xeven777",
+      thumbnail: "https://blog.anish7.me/opengraph-image.jpg",
+      link: "https://github.com/Xeven777/blastro"
+    },
+    {
       repoName: "Lazyping",
       owner: "abhraneeldhar7",
       thumbnail: "https://lazyping.vercel.app/opengraph-image.png",
       link: "https://github.com/abhraneeldhar7/lazy-ping"
     },
-    {
-      repoName: "Blastro",
-      owner: "Xeven777",
-      thumbnail: "https://blog.anish7.me/opengraph-image.jpg",
-      link: "https://github.com/Xeven777/blastro"
+{
+      repoName: "T-Editor",
+      owner: "oneWritesCode",
+      thumbnail: "https://github.com/oneWritesCode/T-Editor/blob/main/public%2Fassets%2FlandingPage-da7a1972-6c6b-4bd5-82e8-518b21560976",
+      link: "https://github.com/oneWritesCode/T-Editor"
     },
     {
       repoName: "Go Interpreter",
@@ -42,8 +48,15 @@ export default function Landingpage() {
       owner: "Srilochan7",
       thumbnail: "/landingPage/examples/chatpdf.png",
       link: "https://github.com/Srilochan7/Quill.ai/tree/main"
+    },
+{
+      repoName: "Scribbly_web",
+      owner: "Arijit-05",
+      thumbnail: "https://github.com/Arijit-05/Scribbly_web/blob/master/public%2Fassets%2FlandingPage-df6fafa6-e610-4c24-996c-b9a26ad8d75d",
+      link: "https://github.com/Arijit-05/Scribbly_web"
     }
   ]
+
 
 
   return (
