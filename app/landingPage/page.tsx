@@ -34,7 +34,7 @@ export default function Landingpage() {
 {
       repoName: "T-Editor",
       owner: "oneWritesCode",
-      thumbnail: "https://github.com/oneWritesCode/T-Editor/blob/main/public%2Fassets%2FlandingPage-da7a1972-6c6b-4bd5-82e8-518b21560976",
+      thumbnail: "/landingPage/examples/Teditor.png",
       link: "https://github.com/oneWritesCode/T-Editor"
     },
     {
@@ -52,7 +52,7 @@ export default function Landingpage() {
 {
       repoName: "Scribbly_web",
       owner: "Arijit-05",
-      thumbnail: "https://github.com/Arijit-05/Scribbly_web/blob/master/public%2Fassets%2FlandingPage-df6fafa6-e610-4c24-996c-b9a26ad8d75d",
+      thumbnail: "/landingPage/examples/scribbly.png",
       link: "https://github.com/Arijit-05/Scribbly_web"
     }
   ]
@@ -170,7 +170,7 @@ export default function Landingpage() {
             <div className='flex justify-center' key={index}>
               <Link className='w-[fit-content]' href={repo.link} target='_blank' >
                 <div className='w-[100%] max-w-[400px] flex flex-col gap-[12px]'>
-                  <Image src={repo.thumbnail} height={100} width={200} alt='' className="h-[200px] w-[100%] rounded-[12px] borde-[1px] border-[var(--foreground)]/30 object-cover transition-all duration-200 hover:translate-y-[-10px]" unoptimized />
+                  <Image src={repo.thumbnail} height={100} width={200} alt='' className="h-[220px] w-[100%] rounded-[12px] borde-[1px] border-[var(--foreground)]/30 object-cover transition-all duration-200 hover:translate-y-[-10px]" unoptimized />
                   <div className='flex flex-col gap-[0px] pl-[10px]'>
                     <h1 className='text-[22px] leading-[1.2em]'>{repo.repoName}</h1>
                     <p className='text-[17px] opacity-[0.7]'>{repo.owner}</p>
