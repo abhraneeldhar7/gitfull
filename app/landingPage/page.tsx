@@ -115,16 +115,15 @@ export default function Landingpage() {
 
       </div>
 
-      <div className='mx-auto max-w-[1000px] px-[15px] mb-[50px] flex flex-col gap-[20px] items-center'>
-        <div className='w-[100%]'>
-          <div className='flex items-center gap-[10px]'>
-            <div className='rounded-[10px] h-[2px] w-[30px] md:w-[50px] bg-[#f9411c]'></div>
-            <h1 className='text-[22px] font-[Satoshi]'>Youtube</h1>
-            <div className='rounded-[10px] h-[2px] w-[100%] bg-[#f9411c]'></div>
-          </div>
+      <div className='w-[100%] px-[10px] md:px-[50px] py-[10px]'>
+        <div className='flex items-center gap-[10px]'>
+          <div className='rounded-[10px] h-[2px] w-[30px] md:w-[50px] bg-[#f9411c]'></div>
+          <h1 className='text-[22px] font-[Satoshi]'>Youtube</h1>
+          <div className='rounded-[10px] h-[2px] w-[100%] bg-[#f9411c]'></div>
         </div>
+      </div>
 
-
+      <div className='mx-auto max-w-[1000px] px-[15px] mb-[50px] flex flex-col gap-[15px] items-center'>
         <Link href="https://youtu.be/3J63ApJ1f48?si=TT4K2quRqYwoAp3k" target='_blank'>
           <Image src="/landingPage/videoThumbnail.png" alt='' height={200} width={350} className='rounded-[15px] h-[100%] object-contain max-w-[500px] w-[100%] transition-all duration-200 hover:opacity-[0.8]' unoptimized />
         </Link>
