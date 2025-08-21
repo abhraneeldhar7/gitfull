@@ -126,7 +126,7 @@ export default function Landingpage() {
 
 
         <Link href="https://youtu.be/3J63ApJ1f48?si=TT4K2quRqYwoAp3k" target='_blank'>
-          <Image src="/landingPage/videoThumbnail.png" alt='' height={200} width={350} className='rounded-[15px] h-[100%] object-contain max-w-[500px] w-[100%]' unoptimized />
+          <Image src="/landingPage/videoThumbnail.png" alt='' height={200} width={350} className='rounded-[15px] h-[100%] object-contain max-w-[500px] w-[100%] transition-all duration-200 hover:opacity-[0.8]' unoptimized />
         </Link>
         <p className='text-[20px] text-center opacity-[0.8] max-w-[500px] w-[100%]' >Watch me explain why this is the greatest thing you will see this week</p>
         <Link href="https://youtu.be/3J63ApJ1f48?si=TT4K2quRqYwoAp3k" target='_blank'>
