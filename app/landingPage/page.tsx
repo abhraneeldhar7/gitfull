@@ -4,7 +4,7 @@ import styles from "./root.module.css"
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Check, GitBranch, MousePointer2, PartyPopper, Sparkle, Sparkles } from 'lucide-react'
+import { Check, GitBranch, MousePointer2, PartyPopper, Play, Sparkle, Sparkles } from 'lucide-react'
 import ReactPlayer from 'react-player'
 import { NumberTicker } from '@/components/magicui/number-ticker'
 
@@ -31,7 +31,7 @@ export default function Landingpage() {
       thumbnail: "https://lazyping.vercel.app/opengraph-image.png",
       link: "https://github.com/abhraneeldhar7/lazy-ping"
     },
-{
+    {
       repoName: "T-Editor",
       owner: "oneWritesCode",
       thumbnail: "/landingPage/examples/Teditor.png",
@@ -49,7 +49,7 @@ export default function Landingpage() {
       thumbnail: "/landingPage/examples/chatpdf.png",
       link: "https://github.com/Srilochan7/Quill.ai/tree/main"
     },
-{
+    {
       repoName: "Scribbly_web",
       owner: "Arijit-05",
       thumbnail: "/landingPage/examples/scribbly.png",
@@ -115,6 +115,27 @@ export default function Landingpage() {
 
       </div>
 
+      <div className='mx-auto max-w-[1000px] px-[15px] mb-[50px] flex flex-col gap-[20px] items-center'>
+        <div className='w-[100%]'>
+          <div className='flex items-center gap-[10px]'>
+            <div className='rounded-[10px] h-[2px] w-[30px] md:w-[50px] bg-[#f9411c]'></div>
+            <h1 className='text-[22px] font-[Satoshi]'>Youtube</h1>
+            <div className='rounded-[10px] h-[2px] w-[100%] bg-[#f9411c]'></div>
+          </div>
+        </div>
+
+
+        <Link href="https://youtu.be/3J63ApJ1f48?si=TT4K2quRqYwoAp3k" target='_blank'>
+          <Image src="/landingPage/videoThumbnail.png" alt='' height={200} width={350} className='rounded-[15px] h-[100%] object-contain max-w-[500px] w-[100%]' unoptimized />
+        </Link>
+        <p className='text-[20px] text-center opacity-[0.8] max-w-[500px] w-[100%]' >Watch me explain why this is the greatest thing you will see this week</p>
+        <Link href="https://youtu.be/3J63ApJ1f48?si=TT4K2quRqYwoAp3k" target='_blank'>
+          <Button className='text-[18px] h-[40px] w-[160px] rounded-[30px]'>
+            Watch now <Play />
+          </Button>
+        </Link>
+
+      </div>
 
 
 
@@ -123,6 +144,7 @@ export default function Landingpage() {
         <div className='hidden md:flex w-[50px] border-r-[1px] border-r-[var(--foreground)]/30'>
           <Image src="/landingPage/carbonfibre.jpg" height={100} width={100} className='h-[100%] w-[100%] object-cover invert dark:invert-0' alt='' unoptimized />
         </div>
+
 
         <div className='flex-1 flex flex-col h-[100%]'>
 
@@ -144,7 +166,7 @@ export default function Landingpage() {
         <div className='border-l-[1px] border-l-[var(--foreground)]/30'>
           {mounted &&
             <div className='h-[100%] md:h-[400px] w-[100%] object-contain'>
-              <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop controls={false}/>
+              <ReactPlayer height="100%" width="100%" src="/landingPage/howtousevid.mp4" playing={true} muted loop controls={false} />
             </div>
           }
         </div>
