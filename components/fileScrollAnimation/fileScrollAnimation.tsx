@@ -64,11 +64,7 @@ export const FileScrollAnimation = ({ filePaths }: { filePaths: string[] }) => {
 
                 {/* Bottom fade gradient */}
                 <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-[var(--background)] from-0% to-transparent to-100% z-10 pointer-events-none"></div>
-
-
             </div>
-
-
         </div >
     );
 };
