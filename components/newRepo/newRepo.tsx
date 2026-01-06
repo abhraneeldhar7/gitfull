@@ -403,8 +403,8 @@ export default function NewRepo({ setRepoTree }: { setRepoTree: Dispatch<SetStat
                         <p><span className="opacity-[0.7]">You have</span> {userDetails?.tokens} <span className="opacity-[0.7]">tokens</span></p>
                     </div>
 
-                    {tokensNeeded > 100000 ? <div>
-                        <p className="text-[red]">One repository can not exceed 100K tokens</p>
+                    {tokensNeeded > 200000 ? <div>
+                        <p className="text-[red]">One repository can not exceed 200K tokens</p>
                     </div> :
                         <div className="mt-[20px] flex flex-col gap-[10px] w-[100%] max-w-[300px] ">
                             <Button disabled={loadingTree || (tokensNeeded > userDetails.tokens)} className="text-[white] bg-[#ec4927] hover:bg-[#FA4F2D]" onClick={() => {

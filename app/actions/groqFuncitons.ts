@@ -358,7 +358,7 @@ export async function makeReadme(owner: string, repo: string, branch: string, em
     const tokensNeeded = estimateTokens(filteredTree)
     // console.log("estimarted token: ", tokensNeeded)
     const userDetails = await getUserDetails(email);
-    if (tokensNeeded > userDetails.tokens || tokensNeeded > 100000) {
+    if (tokensNeeded > userDetails.tokens || tokensNeeded > 200000) {
         return;
     }
 

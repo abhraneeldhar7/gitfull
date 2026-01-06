@@ -197,11 +197,9 @@ export function createContextualChunks(files: any[], maxTokens = 10000) {
       currentTokens += file.tokenEstimate;
     }
   }
-
   if (currentChunk.length > 0) {
     chunks.push(currentChunk);
   }
-
   return chunks;
 }
 
